@@ -159,3 +159,5 @@ Route::get('/gioi-thieu', [DanhGiaController::class, 'showDanhGias'])->name('gio
 
 Route::get('clientdanhmucsanpham', [ClientDanhMucSanPhamController::class, 'index'])->name('danhsach');
 Route::get('/clientsanpham', [ClientDanhMucSanPhamController::class, 'danhSachSanPham'])->name('clientsanpham.danhsach');
+
+

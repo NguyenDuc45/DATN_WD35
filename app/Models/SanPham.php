@@ -77,4 +77,6 @@ class SanPham extends Model
         }
         return 0;
     }
+
+    
 }
