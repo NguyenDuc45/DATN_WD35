@@ -5,6 +5,55 @@
 @endsection
 
 @section('css')
+    <style>
+        .left-slider-image .slick-track {
+            display: flex !important;
+            justify-content: center;
+            gap: 10px;
+            /* Khoảng cách giữa các ảnh */
+        }
+
+        .sidebar-image img {
+            width: 100px;
+            /* Điều chỉnh kích thước ảnh thumbnail */
+            height: auto;
+            cursor: pointer;
+        }
+
+        #main-image {
+            display: block !important;
+            width: 100%;
+            max-height: 400px;
+            /* Giới hạn chiều cao hợp lý */
+            object-fit: contain;
+        }
+
+        .slider-image {
+            /* opacity: 1 !important; */
+        }
+
+        .slick-slide {
+            opacity: 1 !important;
+            filter: none !important;
+        }
+
+        /* Nếu Slick Slider vẫn làm mờ ảnh không active */
+        .slick-slide[aria-hidden="true"] {
+            opacity: 1 !important;
+        }
+
+        .slider-image img,
+        .sidebar-image img {
+            filter: none !important;
+            opacity: 1 !important;
+        }
+
+        .product-left-box img:not(#main-image) {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+        }
+    </style>
 @endsection
 
 @section('breadcrumb')
@@ -41,38 +90,30 @@
                     <div class="row g-4">
                         <div class="col-xl-6 wow fadeInUp">  
                             <div class="product-left-box">  
-                                <div class="row g-sm-4 g-2">  
-                                    <div class="col-12">  
-                                        <div class="product-main no-arrow">  
-                                            <div>  
-                                                <div class="slider-image">  
-                                                    <!-- Hiển thị hình ảnh của sản phẩm chính -->  
-                                                    <img src="{{ asset('storage/' . $sanPhams->hinh_anh) }}" id="main-image"  
-                                                         data-zoom-image="{{ asset('storage/' . $sanPhams->hinh_anh) }}"  
-                                                         class="img-fluid image_zoom_cls-0 blur-up lazyload"  
-                                                         alt="{{ $sanPhams->ten_san_pham }}">  
-                                                </div>  
-                                            </div>  
-                                        </div>  
-                                    </div>  
-                        
-                                    <div class="col-12">  
-                                        <div class="left-slider-image left-slider no-arrow slick-top">  
-                                            @if ($sanPhams->bienThes->isNotEmpty())  
-                                                @foreach ($sanPhams->bienThes as $bienThe)  
-                                                    <div>  
-                                                        <div class="sidebar-image"   
-                                                             onclick="showImage('{{ asset('storage/' . $bienThe->anh_bien_the) }}')">  
-                                                            <!-- Hiển thị hình ảnh của biến thể -->  
-                                                            <img src="{{ asset('storage/' . $bienThe->anh_bien_the) }}"  
-                                                                 class="img-fluid blur-up lazyload"   
-                                                                 alt="{{ $bienThe->ten_bien_the }}">  
-                                                        </div>  
-                                                    </div>  
-                                                @endforeach  
-                                            @endif  
-                                        </div>  
-                                    </div>  
+                                <div class="row g-sm-4 g-2">
+                                    <div class="col-12">
+                                        <div class="product-main no-arrow slick-slider">
+                                            <div class="slider-image">
+                                                <!-- Ảnh chính -->
+                                                <img id="main-image"
+                                                    src="{{ asset('storage/' . $sanPham->anhSP->first()->link_anh_san_pham) }}"
+                                                    class="img-fluid" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div
+                                            class="left-slider-image left-slider no-arrow slick-top d-flex justify-content-center">
+                                            @foreach ($sanPham->anhSP as $anh)
+                                                <div class="sidebar-image mx-2">
+                                                    <img src="{{ asset('storage/' . $anh->link_anh_san_pham) }}"
+                                                        class="img-fluid image-thumbnail" alt=""
+                                                        data-large="{{ asset('storage/' . $anh->link_anh_san_pham) }}">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>  
                             </div>  
                         </div>  
@@ -85,9 +126,9 @@
                                 <h2 class="name"></h2>
                                 <div class="price-rating">
                                     <h3 class="theme-color price">Giá mới:
-                                        <?= number_format($sanPhams->gia_moi, 0, ',', '.') ?>₫ <br><del
+                                        <?= number_format($sanPham->gia_moi, 0, ',', '.') ?>₫ <br><del
                                             class="text-content">Giá cũ:
-                                            <?= number_format($sanPhams->gia_cu, 0, ',', '.') ?>₫</del> <span
+                                            <?= number_format($sanPham->gia_cu, 0, ',', '.') ?>₫</del> <span
                                             class="offer theme-color">(8% off)</span></h3>
                                     <div class="product-rating custom-rate">
                                         <ul class="rating">
@@ -112,7 +153,7 @@
                                 </div>
 
                                 <div class="product-contain">
-                                    <p class="w-100">{{ $sanPhams->mo_ta }}</p>
+                                    <p class="w-100">{{ $sanPham->mo_ta }}</p>
                                 </div>
 
                                 <div class="product-package">
@@ -1733,15 +1774,56 @@
 @endsection
 
 @section('js')
-<script>  
-    function showImage(imageUrl) {  
-        // Cập nhật nguồn hình ảnh chính  
-        const mainImage = document.getElementById('main-image');  
-        mainImage.src = imageUrl;  
-        mainImage.setAttribute('data-zoom-image', imageUrl);  
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Lắng nghe sự kiện click trên tất cả ảnh thumbnail
+            document.querySelectorAll('.image-thumbnail').forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const newImageSrc = this.getAttribute('data-large');
+                    const mainImage = document.getElementById('main-image');
 
-        // Hiển thị ảnh bên trên  
-        mainImage.style.display = "block"; // Đảm bảo ảnh chính hiện ra  
-    }  
-</script>   
+                    if (mainImage) {
+                        mainImage.src = newImageSrc;
+                        mainImage.style.display = 'block'; // Hiển thị ảnh chính nếu bị ẩn
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        $('.left-slider-image').slick({
+            slidesToShow: 4,
+            /
+            slidesToScroll: 1,
+            infinite: true,
+            arrows: true,
+            variableWidth: true,
+            adaptiveHeight: true,
+            fade: false,
+            centerMode: false
+        });
+    </script>
+    {{-- <script>
+        $('.slick-slide').on('click', function(event) {
+            event.preventDefault(); 
+            $(this).blur(); 
+        });
+    </script> --}}
+    <script>
+        $('.left-slider-image').on('init reInit afterChange', function() {
+            $('.slick-slide').css('opacity', '1');
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".sidebar-image img").forEach(img => {
+                img.addEventListener("click", function() {
+                    let mainImage = document.getElementById("main-image");
+                    mainImage.src = this.getAttribute("data-large");
+                });
+            });
+        });
+    </script>
 @endsection
