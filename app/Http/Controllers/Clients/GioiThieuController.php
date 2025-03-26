@@ -17,8 +17,8 @@ class GioiThieuController extends Controller
             ->get();
 
         // Lấy danh sách bài viết mới nhất
-        $baiViets = BaiViet::latest()->take(5)->get();
-
+        $baiViets = BaiViet::orderBy('created_at', 'desc')->take(5)->get(); // Lấy 5 bài mới nhất
+        
         // Truyền dữ liệu sang view
         return view('clients.gioithieu', compact('danhGias', 'baiViets'));
     }
