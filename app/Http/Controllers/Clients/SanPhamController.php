@@ -54,20 +54,20 @@ class SanPhamController extends Controller
     public function chiTiet($id)
     {
         $sanPham = SanPham::with('anhSP')->findOrFail($id);  
-        return view('clients.sanphams.chitiet', compact('sanPham'));  
+         return view('clients.sanphams.chitiet', compact('sanPham'));  
     }
 
     public function sanPhamYeuThich()
     {
         $user = Auth::user();
-        return view('clients.sanphams.sanphamyeuthich',compact('user'));
+        return view('clients.sanphams.sanphamyeuthich', compact('user'));
     }
 
     public function addsanPhamYeuThich(string $id)
     {
         $user = Auth::user();
         $tam =
-        `<li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+            `<li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
             <a href="#" class="notifi-wishlist">
                 <i data-feather="heart"></i>
             </a>
@@ -75,17 +75,16 @@ class SanPhamController extends Controller
                 @csrf
             </form>
         </li>`;
-        if($user){
-            if(!$user->sanPhamYeuThichs()->where('san_pham_id', $id)->exists()){
+        if ($user) {
+            if (!$user->sanPhamYeuThichs()->where('san_pham_id', $id)->exists()) {
                 $user->sanPhamYeuThichs()->attach($id);
                 return response()->json(['message' => 'Thêm thành công vào danh sách yêu thích!'], 200);
-            }else{
+            } else {
                 return response()->json(['success' => false, 'message' => 'Sản phẩm đã tồn tại trong danh sách!'], 500);
             }
-        }else{
+        } else {
             return response()->json(['success' => false, 'message' => 'Bạn chưa đăng nhập!'], 401);
         }
-
     }
 
     public function xoaYeuThich($id)
@@ -105,16 +104,12 @@ class SanPhamController extends Controller
         } catch (\Exception $e) {
             \Log::error('Lỗi xóa sản phẩm yêu thích: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Lỗi server!'], 500);
-
-    }
+        }
     }
 
     public function quickView(Request $request)
     {
-        $sanPham = SanPham::with([
-            'bienThes.tt.giaTriThuocTinhs'
-        ])->find($request->id);
-
+        $sanPham = SanPham::with('danhGias', 'danhMuc', 'bienThes.thuocTinhs', 'bienThes.giaTriThuocTinhs')->find($request->id);
         // return response()->json($sanPham);
 
         if (!$sanPham) {
@@ -135,19 +130,20 @@ class SanPhamController extends Controller
                 return [
                     'id' => $bienThe->id,
                     'ten_bien_the' => $bienThe->ten_bien_the,
-                    'anh_bien_the' => Storage::url($bienThe->anh_bien_the ?? 'images/default.png'),
-                    'thuoc_tinh_gia_tri' => $bienThe->tt->map(function ($thuocTinh) use ($bienThe) {
-                    $giaTri = $bienThe->gttt
-                        ->where('thuoc_tinh_id', $thuocTinh->id)
-                        ->pluck('gia_tri') // Lấy danh sách giá trị
-                        ->toArray(); // Chuyển về mảng
-
-                    return [
-                        'id' => $thuocTinh->id,
-                        'ten' => $thuocTinh->ten_thuoc_tinh,
-                        'gia_tri' => count($giaTri) === 1 ? $giaTri[0] : null // Nếu chỉ có 1 giá trị, lấy nó, ngược lại thì null
-                    ];
-                })
+                    'gia_nhap' => $bienThe->gia_nhap,
+                    'gia_ban' => $bienThe->gia_ban,
+                    'so_luong' => $bienThe->so_luong,
+                    'thuoc_tinh_gia_tri' => $bienThe->thuocTinhs->map(function ($thuocTinh) use ($bienThe) {
+                        return [
+                            'id' => $thuocTinh->id,
+                            'ten' => $thuocTinh->ten_thuoc_tinh,
+                            'gia_tri' => $bienThe->giaTriThuocTinhs
+                                ->where('thuoc_tinh_id', $thuocTinh->id)
+                                ->where('bien_the_id', $bienThe->id) // Lọc đúng biến thể
+                                ->pluck('gia_tri')
+                                ->toArray(),
+                        ];
+                    }),
                 ];
             }),
         ]);
