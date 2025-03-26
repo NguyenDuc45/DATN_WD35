@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Clients;
 
+
+use App\Models\BienThe;
 use App\Models\DanhGia;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
@@ -9,6 +11,7 @@ use App\Models\DanhMucSanPham;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SanPhamController extends Controller
 {
@@ -47,7 +50,6 @@ class SanPhamController extends Controller
                 $query->where('san_phams.trang_thai', 1);
             }
         ])->get();
-
         return view('clients.sanphams.danhsach', compact('sanPhams', 'danhMucs'));
     }
 
@@ -60,9 +62,10 @@ class SanPhamController extends Controller
             'bienThes',
             'anhSP',
             'danhGias',
-            'bienThes.giaTriThuocTinh', // Sửa ở đây
+            'bienThes.giaTriThuocTinhs',
             'bienThes.thuocTinh',
-            'danhGias.nguoiDung'
+            'danhGias.nguoiDung',
+            'danhMuc'
         ])
             ->where('san_phams.id', $id)
             ->where('san_phams.trang_thai', 1)
@@ -77,64 +80,149 @@ class SanPhamController extends Controller
         $phanTramGiamGia = ($sanPham->gia_cu > 0) ?
             round((($sanPham->gia_cu - $sanPham->gia_moi) / $sanPham->gia_cu) * 100) : 0;
 
-        $sanPham = SanPham::with('danhMuc')->findOrFail($id);
-
-        // Lấy danh mục của sản phẩm
-        $danhMucId = $sanPham->danh_muc_id;
-
-        // Lấy các sản phẩm cùng danh mục (trừ sản phẩm hiện tại)
-        $sanPhamsCungDanhMuc = SanPham::where('danh_muc_id', $danhMucId)
-            ->where('id', '!=', $id)
-            ->limit(4) // Giới hạn số lượng hiển thị
+        // Lấy sản phẩm cùng danh mục (loại trừ sản phẩm hiện tại)
+        $sanPhamLienQuan = SanPham::where('danh_muc_id', $sanPham->danh_muc_id)
+            ->where('id', '!=', $sanPham->id) // Loại trừ sản phẩm hiện tại
+            ->where('trang_thai', 1) // Chỉ lấy sản phẩm đang hoạt động
+            ->limit(50) // Giới hạn 4 sản phẩm
             ->get();
 
+
+
+        $bienThes = BienThe::where('san_pham_id', $id)->get();
+
+        // Nhóm màu sắc với danh sách các biến thể tương ứng
+        $mauSac = $bienThes->groupBy(function ($bienThe) {
+            $thuocTinh = optional($bienThe->giaTriThuocTinhs)->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
+            return $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định'; // Xử lý nếu null
+        })->map(function ($items) {
+            $thuocTinh = optional($items->first()->giaTriThuocTinhs)->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
+            return [
+                'gia_tri' => $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định', // Kiểm tra null
+                'anh' => Storage::url(optional($items->first())->anh_bien_the ?? 'default.png'), // Kiểm tra null
+                'bien_thes' => $items->map(function ($bienThe) {
+                    $thuocTinhSize = optional($bienThe->giaTriThuocTinhs->where('thuocTinh.ten_thuoc_tinh', 'Size')->first());
+                    return [
+                        'id' => $bienThe->id,
+                        'gia_tri' => $thuocTinhSize ? $thuocTinhSize->gia_tri : 'Không xác định', // Kiểm tra null
+                        'gia_ban' => $bienThe->gia_ban
+                    ];
+                })->unique('gia_tri')->values()
+            ];
+        })->values();
+        // dd($mauSac);
+
+
+        // Chuyển dữ liệu sang JSON để sử dụng trên giao diện
+        $mauSacJson = json_encode($mauSac);
 
         return view('clients.sanphams.chitiet', [
             'sanPhams' => $sanPham,
             'bienThes' => $sanPham->bienThes,
             'anhSPs' => $sanPham->anhSP,
             'phanTramGiamGia' => $phanTramGiamGia,
-            'sanPhamsCungDanhMuc'=>$sanPhamsCungDanhMuc
+            'sanPhamLienQuan' => $sanPhamLienQuan,
+            'mauSac' => $mauSac,
+            'mauSacJson' => $mauSacJson
         ]);
     }
 
 
-    // public function sanPhamYeuThich()
-    // {
-    //     $user = Auth::user();
-    //     return view('clients.sanphams.sanphamyeuthich', compact('user'));
-    // }
 
 
-    // public function addsanPhamYeuThich(string $id)
-    // {
-    //     $user = Auth::user();
-    //     if ($user) {
-    //         $user->sanPhamYeuThichs()->attach($id);
-    //     } else {
-    //         return redirect()->back()->with(['error' => 'Vui lòng đăng nhập để sử dụng tính năng']);
-    //     }
-    //     return view('clients.sanphams.sanphamyeuthich', compact('user'));
-    // }
 
-    // public function xoaYeuThich($id)
-    // {
-    //     try {
-    //         $user = Auth::user();
+    public function sanPhamYeuThich()
+    {
+        $user = Auth::user();
+        return view('clients.sanphams.sanphamyeuthich', compact('user'));
+    }
 
-    //         // Kiểm tra xem sản phẩm có trong danh sách yêu thích không
-    //         if (!$user->sanPhamYeuThichs()->where('san_pham_id', $id)->exists()) {
-    //             return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại!'], 404);
-    //         }
+    public function addsanPhamYeuThich(string $id)
+    {
+        $user = Auth::user();
+        $tam =
+            `<li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+            <a href="#" class="notifi-wishlist">
+                <i data-feather="heart"></i>
+            </a>
+            <form action="{{ route('add.wishlist',1) }}" method="POST" class="wishlist-form">
+                @csrf
+            </form>
+        </li>`;
+        if ($user) {
+            if (!$user->sanPhamYeuThichs()->where('san_pham_id', $id)->exists()) {
+                $user->sanPhamYeuThichs()->attach($id);
+                return response()->json(['message' => 'Thêm thành công vào danh sách yêu thích!'], 200);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Sản phẩm đã tồn tại trong danh sách!'], 500);
+            }
+        } else {
+            return response()->json(['success' => false, 'message' => 'Bạn chưa đăng nhập!'], 401);
+        }
+    }
 
-    //         // Xóa sản phẩm yêu thích
-    //         $user->sanPhamYeuThichs()->detach($id);
+    public function xoaYeuThich($id)
+    {
+        try {
+            $user = Auth::user();
 
-    //         return response()->json(['success' => true, 'message' => 'Xóa thành công!']);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Lỗi xóa sản phẩm yêu thích: ' . $e->getMessage());
-    //         return response()->json(['success' => false, 'message' => 'Lỗi server!'], 500);
-    //     }
-    // }
+            // Kiểm tra xem sản phẩm có trong danh sách yêu thích không
+            if (!$user->sanPhamYeuThichs()->where('san_pham_id', $id)->exists()) {
+                return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại!'], 404);
+            }
 
+            // Xóa sản phẩm yêu thích
+            $user->sanPhamYeuThichs()->detach($id);
+
+
+
+            return response()->json(['success' => true, 'message' => 'Xóa thành công!']);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi xóa sản phẩm yêu thích: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Lỗi server!'], 500);
+        }
+    }
+
+    public function quickView(Request $request)
+    {
+        $sanPham = SanPham::with('danhGias', 'danhMuc', 'bienThes.thuocTinhs', 'bienThes.giaTriThuocTinhs')->find($request->id);
+        // return response()->json($sanPham);
+        if (!$sanPham) {
+            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+        }
+
+        return response()->json([
+            'id' => $sanPham->id,
+            'ten_san_pham' => $sanPham->ten_san_pham,
+            'gia_moi' => number_format($sanPham->gia_moi, 0, '', '.'),
+            'gia_cu' => number_format($sanPham->gia_cu, 0, '', '.'),
+            'hinh_anh' => Storage::url($sanPham->hinh_anh ?? 'images/default.png'),
+            'mo_ta' => $sanPham->mo_ta,
+            'danh_muc' => $sanPham->danhMuc->ten_danh_muc,
+            'so_sao' => $sanPham->tinhDiemTrungBinh(),
+            'danh_gia' => $sanPham->danhGias->count(),
+            'bien_the' => $sanPham->bienThes->map(function ($bienThe) {
+                return [
+                    'id' => $bienThe->id,
+                    'ten_bien_the' => $bienThe->ten_bien_the,
+                    'gia_nhap' => $bienThe->gia_nhap,
+                    'gia_ban' => $bienThe->gia_ban,
+                    'so_luong' => $bienThe->so_luong,
+                    'thuoc_tinh_gia_tri' => $bienThe->thuocTinhs->map(function ($thuocTinh) use ($bienThe) {
+                        return [
+                            'id' => $thuocTinh->id,
+                            'ten' => $thuocTinh->ten_thuoc_tinh,
+                            'gia_tri' => $bienThe->giaTriThuocTinhs
+                                ->where('thuoc_tinh_id', $thuocTinh->id)
+                                ->where('bien_the_id', $bienThe->id) // Lọc đúng biến thể
+                                ->pluck('gia_tri')
+                                ->toArray(),
+                        ];
+                    }),
+                ];
+            }),
+        ]);
+    }
+
+    
 }

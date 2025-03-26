@@ -12,8 +12,8 @@ class BienThe extends Model
 
     protected $fillable = [
         'san_pham_id',
-        'thuoc_tinh_id',
-        'gia_tri_thuoc_tinh_id',
+        // 'thuoc_tinh_id',
+        // 'gia_tri_thuoc_tinh_id',
         'ten_bien_the',
         'anh_bien_the',
         'gia_nhap',
@@ -28,12 +28,15 @@ class BienThe extends Model
 
     public function thuocTinh()
     {
-        return $this->belongsTo(ThuocTinh::class, 'thuoc_tinh_id');
+
+        return $this->hasMany(ThuocTinh::class, 'id', 'thuoc_tinh_id');
     }
 
-    public function giaTriThuocTinh()
+    // Quan hệ với bảng trung gian bien_the_thuoc_tinhs để lấy giá trị thuộc tính
+    public function giaTriThuocTinhs()
     {
-        return $this->belongsTo(GiaTriThuocTinh::class, 'gia_tri_thuoc_tinh_id', 'id');
+        return $this->belongsToMany(GiaTriThuocTinh::class, 'bien_the_thuoc_tinhs', 'bien_the_id', 'gia_tri_thuoc_tinh_id')
+                    ->withTimestamps();
     }
     
 
@@ -42,5 +45,7 @@ class BienThe extends Model
         return $this->belongsToMany(DonHang::class, 'chi_tiet_don_hangs', 'bien_the_id', 'don_hang_id')
             ->withPivot('so_luong');
     }
-}
 
+
+
+}

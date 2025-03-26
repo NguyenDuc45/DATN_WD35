@@ -86,7 +86,7 @@
     <!-- Header Start -->
     @include('clients.blocks.header')
     <!-- Header End -->
-   
+
 
     @yield('breadcrumb')
 
@@ -219,4 +219,124 @@
         });
     }
     </script>
+    <script>
+        $(document).ready(function () {
+            $(".notifi-wishlist").on("click", function (e) {
+                e.preventDefault(); // Ngăn chặn load lại trang
+
+                var button = $(this); // Lưu nút đang bấm
+                var form = button.closest("li").find(".wishlist-form"); // Tìm form gần nhất
+                var formData = form.serialize(); // Lấy dữ liệu form
+
+                $.ajax({
+                    url: form.attr("action"),
+                    type: "POST",
+                    data: formData,
+                    success: function (response) {
+                        $.notify({
+                            icon: "fa fa-check",
+                            title: "Thành công!",
+                            message: response.message || "Sản phẩm đã được thêm vào danh sách yêu thích.",
+                        }, {
+                            element: "body",
+                            type: "success",
+                            placement: { from: "top", align: "right" },
+                            delay: 3000,
+                            animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
+                        });
+
+                        // Đổi màu icon thành đỏ (đã yêu thích)
+                        button.find("i").css("color", "red");
+                    },
+                    error: function (xhr) {
+                        $.notify({
+                            icon: "fa fa-times",
+                            title: "Lỗi!",
+                            message: xhr.responseJSON?.message || "Có lỗi xảy ra, vui lòng thử lại.",
+                        }, {
+                            element: "body",
+                            type: "danger",
+                            placement: { from: "top", align: "right" },
+                            delay: 3000,
+                            animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
+                        });
+                    }
+                });
+            });
+        });
+
+        </script>
+<script>
+    $(document).ready(function() {
+    $(".btn-quick-view").click(function() {
+        let productId = $(this).data("id");
+
+        $.ajax({
+            url: 'http://127.0.0.1:8000/quick-view?id=' + productId,
+            method: 'GET',
+            success: function(response) {
+                // Cập nhật thông tin chung
+                $('#view .title-name').text(response.ten_san_pham);
+                $('#view .slider-image img').attr('src', response.hinh_anh);
+                $('#view .danh_muc').text(response.danh_muc);
+                $('#view .mo_ta').text(response.mo_ta);
+                $('#view .danh_gia').text(response.danh_gia + ' lượt đánh giá');
+                $('#view .gia_moi').text(response.gia_moi + ' đ');
+                $('#view .gia_cu').text(response.gia_cu + ' đ');
+
+                // Hiển thị danh sách thuộc tính dạng button
+                let attributesHtml = '';
+let attributeGroups = {};
+
+response.bien_the.forEach(bienThe => {
+    bienThe.thuoc_tinhs.forEach(thuocTinh => {
+        if (!attributeGroups[thuocTinh.ten]) {
+            attributeGroups[thuocTinh.ten] = new Set();
+        }
+    });
+
+    bienThe.gia_tri_thuoc_tinhs.forEach(giaTri => {
+        if (attributeGroups[giaTri.ten]) {
+            attributeGroups[giaTri.ten].add(giaTri.gia_tri);
+        }
+    });
+});
+
+Object.keys(attributeGroups).forEach(attributeName => {
+    attributesHtml += `
+        <div class="attribute-group">
+            <label>${attributeName}</label>
+            <div class="options-container">
+                ${[...attributeGroups[attributeName]].map(value => `
+                    <div class="attribute-option" data-attribute="${attributeName}" data-value="${value}">
+                        ${value}
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+});
+
+$('.variant-section').html(attributesHtml);
+
+            },
+            error: function() {
+                alert('Không tìm thấy sản phẩm!');
+            }
+        });
+    });
+
+    // Xử lý khi chọn thuộc tính
+    $(document).on('click', '.attribute-option', function() {
+        let attributeName = $(this).data("attribute");
+        let attributeValue = $(this).data("value");
+
+        // Xóa active cũ, thêm active mới
+        $(`.attribute-option[data-attribute="${attributeName}"]`).removeClass("active");
+        $(this).addClass("active");
+
+        console.log("Đã chọn:", attributeName, attributeValue);
+    });
+});
+
+</script>
 </html>
