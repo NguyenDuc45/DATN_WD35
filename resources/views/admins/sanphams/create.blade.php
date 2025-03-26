@@ -111,6 +111,9 @@
             border-radius: 50%;
             cursor: pointer;
         }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            border: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -232,7 +235,6 @@
                                             @php
                                                 $selectedValues = old("attribute_values.$tt->id", []);
                                             @endphp
-                                            <option value=""></option>
                                             <!-- Tạo option rỗng để Select2 nhận diện placeholder -->
                                             @foreach ($tt->giaTriThuocTinhs as $value)
                                                 <option value="{{ $value->gia_tri }}"
@@ -352,7 +354,7 @@
 <!-- Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
-    < script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" >
+< script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" >
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
@@ -386,8 +388,11 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-        $(".select2").select2();
+    $(document).ready(function () {
+        $(".select2").select2({
+            placeholder: "Chọn một giá trị",
+            allowClear: true
+        });
 
         var deletedVariants = JSON.parse($("#deletedVariants").val() || "[]");
 

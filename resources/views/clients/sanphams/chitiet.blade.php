@@ -117,13 +117,11 @@
                                 </div>  
                             </div>  
                         </div>  
-
-                        <div class="col-xl-6 wow fadeInUp">
-                            <h2>Frequently bought together</h2>
-                            <br>
+                        
+                        <div class="col-xl-6 wow fadeInUp">      
                             <div class="right-box-contain">
                                 <h6 class="offer-top">30% Off</h6>
-                                <h2 class="name"></h2>
+                                <h2 class="name">{{$sanPham->ten_san_pham}}</h2> 
                                 <div class="price-rating">
                                     <h3 class="theme-color price">Giá mới:
                                         <?= number_format($sanPham->gia_moi, 0, ',', '.') ?>₫ <br><del
@@ -153,14 +151,13 @@
                                 </div>
 
                                 <div class="product-contain">
-                                    <p class="w-100">{{ $sanPham->mo_ta }}</p>
+                                    <p class="w-100">{!! $sanPham->mo_ta !!}</p>
                                 </div>
 
                                 <div class="product-package">
                                     <div class="product-title">
                                         <h4>Màu sắc </h4>
                                     </div>
-
                                     <ul class="color circle select-package">
                                         <li class="form-check">
                                             <input class="form-check-input" checked type="radio" name="color"
@@ -217,49 +214,6 @@
                                     </ul>
                                 </div>
 
-                                <div class="time deal-timer product-deal-timer mx-md-0 mx-auto" id="clockdiv-1"
-                                    data-hours="1" data-minutes="2" data-seconds="3">
-                                    <div class="product-title">
-                                        <h4>Hurry up! Sales Ends In</h4>
-                                    </div>
-                                    <ul>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="days d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Days</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="hours d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Hours</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="minutes d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Min</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="seconds d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Sec</h6>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-
-
-
                                 <div class="note-box product-package">
                                     <div class="cart_qty qty-box product-qty">
                                         <div class="input-group">
@@ -283,25 +237,23 @@
                                 <div class="buy-box">
                                     <a href="wishlist.html">
                                         <i data-feather="heart"></i>
-                                        <span>Add To Wishlist</span>
+                                        <span>
+                                            Thêm vào danh sách yêu thích</span>
                                     </a>
 
-                                    <a href="compare.html">
+                                    {{-- <a href="compare.html">
                                         <i data-feather="shuffle"></i>
                                         <span>Add To Compare</span>
-                                    </a>
+                                    </a> --}}
                                 </div>
 
                                 <div class="pickup-box">
                                     <div class="product-title">
-                                        <h4>Store Information</h4>
+                                        <h4>Mô tả</h4>
                                     </div>
 
                                     <div class="pickup-detail">
-                                        <h4 class="text-content w-100">I would like the people that buy my clothes to
-                                            understand that for me it's one small piece of art. I love the 2000s because
-                                            everyone started to love haute couture. The only way to do something in
-                                            depth is to work hard.</h4>
+                                        <h4 class="text-content w-100">Mô tả: {!! $sanPham->mo_ta !!}</h4>
                                     </div>
 
                                     <div class="product-info">
@@ -315,7 +267,7 @@
 
                                 <div class="payment-option">
                                     <div class="product-title">
-                                        <h4>Guaranteed Safe Checkout</h4>
+                                        <h4>Phương thức thanh toán</h4>
                                     </div>
                                     <ul>
                                         <li>
@@ -566,7 +518,7 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse1">Description</button>
+                                        data-bs-target="#collapse1">Mô tả</button>
                                 </h2>
                                 <div id="collapse1" class="accordion-collapse collapse show"
                                     data-bs-parent="#accordionExample">
@@ -692,7 +644,7 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse4">Review</button>
+                                        data-bs-target="#collapse4">Đánh giá</button>
                                 </h2>
                                 <div id="collapse4" class="accordion-collapse collapse"
                                     data-bs-parent="#accordionExample">
@@ -1826,4 +1778,5 @@
             });
         });
     </script>
+
 @endsection

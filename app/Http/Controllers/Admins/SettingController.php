@@ -21,14 +21,21 @@ class SettingController extends Controller
         }else if($request->isMethod('post')){
 
         $data = $request->validate([
-            'logo' => 'required|image',
+            'logo' => 'image',
+            'location' => 'required',
+            'name_website' => 'required',
+            'email_owner' => 'required',
+            'phone' => 'required',
         ],
         [
             'logo.required' => 'Logo không được bỏ trống',
+            'location.required' => 'Logo không được bỏ trống',
+            'name_website.required' => 'Logo không được bỏ trống',
+            'phone.required' => 'Logo không được bỏ trống',
             'logo.image' => 'Logo phải là một hình ảnh',
             'logo.mimes' => 'Logo phải có đuôi.jpg,.png,.gif',
             'logo.max' => 'Kích thước logo phải nhỏ hơn 2MB',
-            // 'logo.dimensions' => 'Logo phải có kích thước 1920x1080 pixels', // Có thể thêm điều kiện kích thước ảnh này
+            'email_owner.required' => 'Vui lòng nhập mail chủ sở hữu',
 
         ]);
         $setting = Setting::first(); // Lấy setting hiện tại
@@ -37,16 +44,17 @@ class SettingController extends Controller
         }
         // dd(Storage::exists("public/".$setting->logo),"app/public/".$setting->logo);
         if ($request->hasFile('logo')) {
-            if($setting->logo && Storage::exists("public/".$setting->logo)) {
-                Storage::delete("public/".$setting->logo);
+            if($setting->logo && Storage::exists($setting->logo) ) {
+                Storage::delete($setting->logo);
             }
-            $logoPath = $request->file('logo')->store('logos', 'public'); // Lưu vào storage/public/logos
-            $setting->logo = $logoPath;
+            $fileName = time() . '_' . $request->file('logo')->getClientOriginalName();
+            $request->file('logo')->storeAs("public/logos/", $fileName);
+            $data['logo'] = "public/logos/".$fileName;;
         }
-
+        $setting->fill($data);
         $setting->save();
 
-        return back()->with('success', 'Cập nhật logo thành công!');
+        return back()->with('success', 'Cập nhật thành công!');
     }
         //     $data = $request->except('_token');
         //     // dd($data);
@@ -128,15 +136,16 @@ class SettingController extends Controller
             'so_dien_thoai.digits' => 'Vui lòng nhập số điện thoại có 10 số',
             'so_dien_thoai.unique' => 'Số điện thoại đã tồn tại',
         ]);
-            // dd($data);
+        // dd($data);
         if($request->hasFile('anh_dai_dien')){
             if(Auth::user()->anh_dai_dien && file_exists(storage_path("app/public/".Auth::user()->anh_dai_dien))){
-                // dd('in');
-                unlink(storage_path('app/public/'.Auth::user()->anh_dai_dien)); // Xóa ảnh c�� nếu có
+                unlink(storage_path('app/public/'.Auth::user()->anh_dai_dien));
             }
-            // dd('out');
-            $data['anh_dai_dien'] = $request->anh_dai_dien->store('uploads/user/img','public');
+            $fileName = time() . '_' . $request->file('anh_dai_dien')->getClientOriginalName();
+            $request->file('anh_dai_dien')->storeAs("public/uploads/user/", $fileName);
+            $data['anh_dai_dien'] = 'uploads/user/' . $fileName;;
         }
+
         // dd($request->hasFile($request->anh_dai_dien));
         User::where('id',Auth::user()->id)->update($data);
         session()->flash('success', 'Sửa thông tin thành công!');

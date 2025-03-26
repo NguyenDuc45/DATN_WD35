@@ -22,4 +22,14 @@ class DonHang extends Model
         'trang_thai_don_hang',
         'trang_thai_thanh_toan'
     ];
+
+    public function user(){
+        return $this->belongsTo(SanPhamYeuThich::class, 'user_id');
+    }
+
+    public function bienThes()
+{
+    return $this->belongsToMany(BienThe::class, 'chi_tiet_don_hangs', 'don_hang_id', 'bien_the_id')
+                ->withPivot('so_luong');
+}
 }
