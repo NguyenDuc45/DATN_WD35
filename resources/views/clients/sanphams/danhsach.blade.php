@@ -17,8 +17,6 @@
         transform: scale(1.05);
         cursor: pointer;
     }
-
-    /* Làm chữ trắng khi hover */
     .category-list-box:hover .name {
         font-weight: bold;
         color: white;
@@ -477,9 +475,12 @@
                                                     </a>
                                                 </li>
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                                    <a href="wishlist.html" class="notifi-wishlist">
+                                                    <a href="#" class="notifi-wishlist">
                                                         <i data-feather="heart"></i>
                                                     </a>
+                                                    {{-- <form action="{{ route('add.wishlist',$sanPham->id) }}" method="POST" class="wishlist-form">
+                                                        @csrf
+                                                    </form> --}}
                                                 </li>
                                             </ul>
                                         </div>
@@ -509,8 +510,8 @@
                                             <h5 class="price">
                                                 <span
                                                     class="theme-color">{{ number_format($sanPham->gia_moi, 0, ',', '.') }}
-                                                    VNĐ</span>
-                                                <del>{{ number_format($sanPham->gia_cu, 0, ',', '.') }} VNĐ</del>
+                                                    ₫</span>
+                                                <del>{{ number_format($sanPham->gia_cu, 0, ',', '.') }} ₫</del>
 
                                             </h5>
                                             <div class="add-to-cart-box bg-white">

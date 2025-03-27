@@ -162,3 +162,7 @@ Route::get('clientdanhmucsanpham', [ClientDanhMucSanPhamController::class, 'inde
 Route::get('/clientsanpham', [ClientDanhMucSanPhamController::class, 'danhSachSanPham'])->name('clientsanpham.danhsach');
 Route::get('/top-san-pham', [SanPhamController::class, 'sanPhamTopDanhGia'])->name('sanpham.top_danh_gia');
 Route::post('/lienhe', [ContactController::class, 'send'])->name('send.contact');
+
+Route::get('/san-pham/{id}/bien-the', [SanPhamController::class, 'getBienThe']);
+
+

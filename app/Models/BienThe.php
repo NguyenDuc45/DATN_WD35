@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BienThe extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'san_pham_id',
@@ -25,14 +26,19 @@ class BienThe extends Model
         return $this->belongsTo(SanPham::class, 'san_pham_id');
     }
 
-    public function thuocTinhs()
+    public function thuocTinh()
     {
+
         return $this->hasMany(ThuocTinh::class, 'id', 'thuoc_tinh_id');
     }
+
+    // Quan hệ với bảng trung gian bien_the_thuoc_tinhs để lấy giá trị thuộc tính
     public function giaTriThuocTinhs()
     {
-        return $this->hasMany(GiaTriThuocTinh::class, 'id', 'gia_tri_thuoc_tinh_id');
+        return $this->belongsToMany(GiaTriThuocTinh::class, 'bien_the_thuoc_tinhs', 'bien_the_id', 'gia_tri_thuoc_tinh_id')
+                    ->withTimestamps();
     }
+    
 
     public function donHangs()
     {
@@ -57,4 +63,7 @@ class BienThe extends Model
             'gia_tri_thuoc_tinh_id' // Liên kết `bien_the_thuoc_tinhs` với `gia_tri_thuoc_tinhs`
         );
     }
+
+
+
 }

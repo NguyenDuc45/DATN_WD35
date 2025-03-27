@@ -40,9 +40,9 @@ class SanPham extends Model
     }
 
     public function usersYeuThich()
-{
-    return $this->belongsToMany(User::class, 'san_pham_yeu_thichs', 'san_pham_id', 'user_id');
-}
+    {
+        return $this->belongsToMany(User::class, 'san_pham_yeu_thichs', 'san_pham_id', 'user_id');
+    }
 
     public function scopeSearch($query, $search)
     {
