@@ -23,10 +23,13 @@ use App\Http\Controllers\DanhMucBaiVietController;
 use App\Http\Controllers\DanhMucSanPhamController;
 use App\Http\Controllers\GiaTriThuocTinhController;
 use App\Http\Controllers\Admins\Auth\AuthController;
+use App\Http\Controllers\Clients\IndexClientController;
+
+
 use App\Http\Controllers\ClientDanhMucSanPhamController;
+use App\Http\Controllers\Clients\DanhGiaClientsController;
 use App\Http\Controllers\Admins\Responsibility\RoleController;
 use App\Http\Controllers\Admins\Responsibility\PermissionController;
-use App\Http\Controllers\Clients\IndexClientController;
 use App\Http\Controllers\Clients\UserController as ClientsUserController;
 use App\Http\Controllers\Clients\Auth\AuthController as AuthAuthController;
 
@@ -124,7 +127,8 @@ Route::controller(App\Http\Controllers\Clients\Auth\AuthController::class)->grou
     Route::get('/logout', 'logout')->name('logout.client');
 });
 
-
+Route::get('/san-pham/{san_pham_id}/danh-gia', [DanhGiaClientsController::class, 'danhSachDanhGia']);
+Route::post('/san-pham/{san_pham_id}/danh-gia', [DanhGiaClientsController::class, 'themDanhGia'])->name('sanphams.themdanhgia');
 
 Route::get('/sanpham', [App\Http\Controllers\Clients\SanPhamController::class, 'danhSach'])->name('sanphams.danhsach');
 Route::get('/sanpham/{id}', [App\Http\Controllers\Clients\SanPhamController::class, 'chiTiet'])->name('sanphams.chitiet');
@@ -141,7 +145,13 @@ Route::get('/baiviet/{id}', [App\Http\Controllers\Clients\BaiVietController::cla
 Route::get('/huongdan', [App\Http\Controllers\Clients\HuongDanController::class, 'danhSach'])->name('huongdans.danhsach');
 Route::get('/huongdan/{id}', [App\Http\Controllers\Clients\HuongDanController::class, 'chiTiet'])->name('huongdans.chitiet');
 
-Route::get('/giohang', [App\Http\Controllers\Clients\ThanhToanController::class, 'gioHang'])->name('thanhtoans.giohang');
+Route::get('/giohang', [App\Http\Controllers\Clients\GioHangController::class, 'gioHang'])->name('giohang');
+Route::post('/post-giohang', [App\Http\Controllers\Clients\GioHangController::class, 'storegioHang'])->name('post.giohang');
+Route::post('/xoa-gio-hang', [App\Http\Controllers\Clients\GioHangController::class, 'xoagioHang'])->name('delete.giohang');
+Route::post('/nhap-voucher', [App\Http\Controllers\Clients\GioHangController::class, 'nhapvoucher'])->name('voucher.giohang');
+
+
+
 Route::get('/thanhtoan', [App\Http\Controllers\Clients\ThanhToanController::class, 'thanhToan'])->name('thanhtoans.thanhtoan');
 Route::get('/dathangthanhcong', [App\Http\Controllers\Clients\ThanhToanController::class, 'datHangThanhCong'])->name('thanhtoans.dathangthanhcong');
 

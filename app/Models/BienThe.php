@@ -65,5 +65,9 @@ class BienThe extends Model
     }
 
 
+    public function gioHang()
+    {
+        return $this->hasMany(ChiTietGioHang::class, 'bien_the_id');
+    }
 
 }

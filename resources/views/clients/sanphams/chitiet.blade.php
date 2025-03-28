@@ -196,9 +196,86 @@
             height: 100px;
             object-fit: cover;
         }
-        .product-rating-list .feather .feather-star{
+
+        .product-rating-list .feather .feather-star {
             color: #ffcc00;
         }
+
+        .rating i {
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .rating i.selected {
+            color: #f39c12;
+        }
+
+        #color-options {
+            display: flex;
+            gap: 10px;
+            /* Tạo khoảng cách giữa các phần tử */
+        }
+        .product-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; /* Khoảng cách giữa các phần tử */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.product-image img {
+    width: 100px; /* Định kích thước ảnh */
+    height: 100px;
+    object-fit: cover;
+}
+
+.product-content {
+    flex: 1; /* Cho phép phần nội dung mở rộng */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.product-review-rating {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-rating {
+    display: flex;
+    flex-direction: column; /* Xếp giá thành 2 dòng */
+    align-items: flex-start; /* Căn trái */
+    text-align: left;
+}
+
+.theme-color {
+    color: #009970; /* Màu xanh tương tự ảnh */
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    width: 100%; /* Đảm bảo cùng độ rộng */
+}
+
+del {
+    color: gray;
+    font-size: 14px;
+    margin-top: 2px;
+    display: block;
+    width: 100%; /* Đảm bảo cùng độ rộng */
+}
+.review-box{
+    margin: 5px 0;
+}
     </style>
 @endsection
 
@@ -743,75 +820,117 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Viết đánh giá</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Viết đánh giá sản phẩm</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 <div class="modal-body pt-0">
-                    <form class="product-review-form">
-                        <div class="product-wrapper">
+                    <form id="reviewForm" method="POST"
+                        action="{{ route('sanphams.themdanhgia', ['san_pham_id' => $sanPhams->id]) }}">
+                        @csrf
+                        <input type="hidden" name="san_pham_id" value="{{ $sanPhams->id }}">
+                        <input type="hidden" name="so_sao" id="so_sao" value="5"> <!-- Giá trị mặc định -->
+
+                        <div class="product-wrapper" >
                             <div class="product-image">
-                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}" class="img-fluid rounded shadow-sm"
+                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}" class="img-fluid rounded shadow-sm" style="witdh:100%; height:100%;"
                                     alt="{{ $sanPhams->ten_san_pham }}">
                             </div>
                             <div class="product-content">
                                 <h5 class="name">{{ $sanPhams->ten_san_pham }}</h5>
                                 <div class="product-review-rating">
                                     <div class="product-rating">
-                                        {{-- <h6 class="price-number">{{ number_format($sanPhams->gia_moi, 0, ',', '.') }} đ --}}
                                         <span class="theme-color">{{ number_format($sanPhams->gia_moi, 0, ',', '.') }}
                                             ₫</span>
                                         <del>{{ number_format($sanPhams->gia_cu, 0, ',', '.') }} ₫</del>
-
-                                        </h6>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
                         <div class="review-box">
-                            <div class="product-review-rating">
-                                <label></label>
-                                <div class="product-rating">
-                                    <ul class="rating">
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star"></i>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <label></label>
+                            <div class="rating" id="ratingStars">
+                                <i class="fa fa-star" data-value="1"></i>
+                                <i class="fa fa-star" data-value="2"></i>
+                                <i class="fa fa-star" data-value="3"></i>
+                                <i class="fa fa-star" data-value="4"></i>
+                                <i class="fa fa-star" data-value="5"></i>
                             </div>
                         </div>
+
                         <div class="review-box">
-                            <label for="content" class="form-label">Câu trả lời của bạn *</label>
-                            <textarea id="content" rows="3" class="form-control" placeholder="Câu trả lời của bạn"></textarea>
+                            <label for="nhan_xet" class="form-label">Nhận xét của bạn *</label>
+                            <textarea id="nhan_xet" name="nhan_xet" rows="3" class="form-control" placeholder="Viết nhận xét của bạn..."
+                                required></textarea>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-md btn-theme-outline fw-bold"
+                                data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-md fw-bold text-light theme-bg-color"
+                                >Gửi</button>
+                        </div>
+                        {{-- <button type="submit" class="btn btn-primary mt-3">Gửi đánh giá</button> --}}
                     </form>
+
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-md btn-theme-outline fw-bold"
-                        data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-md fw-bold text-light theme-bg-color">Gửi</button>
-                </div>
+                
             </div>
         </div>
     </div>
+
+
+
     <!-- Review Modal End -->
 @endsection
 
 @section('js')
+    <script>
+        function loadDanhGias() {
+            let sanPhamId = document.getElementById("san_pham_id").value;
+
+            fetch(`/san-pham/${sanPhamId}/danh-gia`)
+                .then(response => response.json())
+                .then(data => {
+                    let danhGiaHtml = "";
+                    data.forEach(danhGia => {
+                        danhGiaHtml +=
+                            `<p><strong>${danhGia.nguoi_dung.ten_nguoi_dung}</strong> (${danhGia.so_sao}⭐): ${danhGia.nhan_xet}</p>`;
+                    });
+                    document.getElementById("danhGias").innerHTML = danhGiaHtml;
+                });
+        }
+    </script>
+
+    <script>
+        function themDanhGia() {
+            let sanPhamId = document.getElementById("san_pham_id").value;
+            let soSao = document.getElementById("so_sao").value;
+            let nhanXet = document.getElementById("nhan_xet").value;
+
+            fetch(`/san-pham/${sanPhamId}/danh-gia`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({
+                        so_sao: soSao,
+                        nhan_xet: nhanXet
+                    })
+                })
+                .then(response => response.json())
+                .then(() => {
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('writereview'));
+                    myModal.hide();
+
+                    document.getElementById("nhan_xet").value = "";
+
+                    loadDanhGias();
+                });
+        }
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let colorInputs = document.querySelectorAll(".variant-color-selector");
@@ -991,4 +1110,72 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script>
+        function themDanhGia() {
+            let sanPhamId = document.getElementById("san_pham_id").value;
+            let soSao = document.getElementById("so_sao").value;
+            let nhanXet = document.getElementById("nhan_xet").value;
+
+            fetch(`/san-pham/${sanPhamId}/danh-gia`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                    },
+                    body: JSON.stringify({
+                        so_sao: soSao,
+                        nhan_xet: nhanXet
+                    })
+                })
+                .then(response => response.json())
+                .then(() => {
+                    // Đóng modal sau khi gửi đánh giá thành công
+                    var myModal = new bootstrap.Modal(document.getElementById('writereview'));
+                    myModal.hide();
+
+                    // Tải lại danh sách đánh giá
+                    loadDanhGias();
+                });
+        }
+
+        function loadDanhGias() {
+            let sanPhamId = document.getElementById("san_pham_id").value;
+
+            fetch(`/san-pham/${sanPhamId}/danh-gia`)
+                .then(response => response.json())
+                .then(data => {
+                    let danhGiaHtml = "";
+                    data.forEach(danhGia => {
+                        danhGiaHtml +=
+                            `<p><strong>${danhGia.nguoi_dung.ten_nguoi_dung}</strong> (${danhGia.so_sao}⭐): ${danhGia.nhan_xet}</p>`;
+                    });
+                    document.getElementById("danhGias").innerHTML = danhGiaHtml;
+                });
+        }
+
+        // Gọi load danh sách đánh giá khi trang được load
+        document.addEventListener("DOMContentLoaded", loadDanhGias);
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const stars = document.querySelectorAll("#ratingStars i");
+            const soSaoInput = document.getElementById("so_sao");
+
+            stars.forEach(star => {
+                star.addEventListener("click", function() {
+                    let rating = this.getAttribute("data-value");
+                    soSaoInput.value = rating; // Cập nhật giá trị sao
+
+                    // Cập nhật hiển thị sao
+                    stars.forEach(s => {
+                        if (s.getAttribute("data-value") <= rating) {
+                            s.classList.add("selected");
+                        } else {
+                            s.classList.remove("selected");
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endsection

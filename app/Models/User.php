@@ -43,9 +43,15 @@ class User extends Authenticatable
         return $this->hasMany(DonHang::class, 'user_id');
     }
 
+
     public function danhGias()
     {
         return $this->hasMany(DanhGia::class, 'user_id');
+    }
+    public function gioHang()
+    {
+        return $this->hasMany(ChiTietGioHang::class, 'user_id');
+
     }
 
     /**
@@ -58,15 +64,17 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    // /**
+    //  * The attributes that should be cast.
+    //  *
+    //  * @var array<string, string>
+    //  */
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    //     'password' => 'hashed',
+    // ];
 
-    protected $guard_name = 'web';
+    // protected $guard_name = 'web';
+    // }
+
 }
