@@ -84,32 +84,38 @@ class SanPhamController extends Controller
         $sanPhamLienQuan = SanPham::where('danh_muc_id', $sanPham->danh_muc_id)
             ->where('id', '!=', $sanPham->id) // Loại trừ sản phẩm hiện tại
             ->where('trang_thai', 1) // Chỉ lấy sản phẩm đang hoạt động
-            ->limit(50) // Giới hạn 4 sản phẩm
+            ->limit(50)
             ->get();
 
 
 
-        $bienThes = BienThe::where('san_pham_id', $id)->get();
+            $bienThes = BienThe::where('san_pham_id', $id)->get();
 
-        // Nhóm màu sắc với danh sách các biến thể tương ứng
-        $mauSac = $bienThes->groupBy(function ($bienThe) {
-            $thuocTinh = optional($bienThe->giaTriThuocTinhs)->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
-            return $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định'; // Xử lý nếu null
-        })->map(function ($items) {
-            $thuocTinh = optional($items->first()->giaTriThuocTinhs)->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
-            return [
-                'gia_tri' => $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định', // Kiểm tra null
-                'anh' => Storage::url(optional($items->first())->anh_bien_the ?? 'default.png'), // Kiểm tra null
-                'bien_thes' => $items->map(function ($bienThe) {
-                    $thuocTinhSize = optional($bienThe->giaTriThuocTinhs->where('thuocTinh.ten_thuoc_tinh', 'Size')->first());
-                    return [
-                        'id' => $bienThe->id,
-                        'gia_tri' => $thuocTinhSize ? $thuocTinhSize->gia_tri : 'Không xác định', // Kiểm tra null
-                        'gia_ban' => $bienThe->gia_ban
-                    ];
-                })->unique('gia_tri')->values()
-            ];
-        })->values();
+            $mauSac = $bienThes->groupBy(function ($bienThe) {
+                $thuocTinh = optional($bienThe->giaTriThuocTinhs)
+                    ->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
+                return $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định';
+            })->map(function ($items) {
+                $thuocTinh = optional($items->first()->giaTriThuocTinhs)
+                    ->where('thuocTinh.ten_thuoc_tinh', 'Color')->first();
+                
+                return [
+                    'gia_tri' => $thuocTinh ? $thuocTinh->gia_tri : 'Không xác định',
+                    'anh' => Storage::url(optional($items->first())->anh_bien_the ?? 'default.png'), // Ảnh mặc định của màu
+                    'bien_thes' => $items->map(function ($bienThe) {
+                        $thuocTinhSize = optional($bienThe->giaTriThuocTinhs
+                            ->where('thuocTinh.ten_thuoc_tinh', 'Size')->first());
+                        return [
+                            'id' => $bienThe->id,
+                            'gia_tri' => $thuocTinhSize ? $thuocTinhSize->gia_tri : 'Không xác định',
+                            'gia_ban' => $bienThe->gia_ban,
+                            'so_luong' => $bienThe->so_luong,
+                            'anh' => Storage::url($bienThe->anh_bien_the ?? 'default.png') // Ảnh riêng của biến thể (màu + size)
+                        ];
+                    })->unique('gia_tri')->values()
+                ];
+            })->values();
+
         // dd($mauSac);
 
 
@@ -223,6 +229,4 @@ class SanPhamController extends Controller
             }),
         ]);
     }
-
-    
 }

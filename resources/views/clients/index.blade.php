@@ -1415,7 +1415,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="best-selling-slider product-wrapper wow fadeInUp">
+                    <div class="best-selling-slider product-wrapper wow fadeInUp">
                         <div>
                             <ul class="product-list">
                                 @foreach ($part1 as $item)
@@ -1510,7 +1510,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div> --}}
+                    </div>
 
                     {{-- <div class="section-t-space">
                         <div class="banner-contain hover-effect">

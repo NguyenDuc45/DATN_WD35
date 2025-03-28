@@ -243,30 +243,40 @@
                             </h2>
                             <br>
                             <div class="right-box-contain">
-                                <h6 class="offer-top">({{ $phanTramGiamGia }}% off)</h6>
-                                <h2 class="name"></h2>
-                                <div class="price-rating">
-                                    <h3 class="theme-color price">
-                                        <?= number_format($sanPhams->gia_moi, 0, ',', '.') ?>₫ <br><del
-                                            class="text-content">
-                                            <?= number_format($sanPhams->gia_cu, 0, ',', '.') ?>₫</del>
+                                <h6 class="offer-top">({{ $phanTramGiamGia }}% off)</h6> <!-- Giữ mặc định -->
+
+
+                                <!-- Hiển thị giá cập nhật khi chọn size -->
+                                <div class="mt-3">
+                                    <strong class="price-label"></strong>
+                                    <span id="product-price" class="theme-color price"
+                                        style="font-size: 20px; font-weight: bold;">0₫</span>
                                 </div>
+                                <h3 class="theme-color price">
+                                    <span id="default-price" style="font-size: 20px; font-weight: bold;">
+                                        {{ number_format($sanPhams->gia_moi, 0, ',', '.') }}₫
+                                    </span>
+                                    <br>
+                                    <del id="default-old-price" class="text-content">
+                                        {{ number_format($sanPhams->gia_cu, 0, ',', '.') }}₫
+                                    </del>
+                                </h3>
 
                                 <div class="product-contain">
                                     <p class="w-100"></p>
                                 </div>
-
+    
                                 <div class="product-package">
                                     <!-- Hiển thị danh sách màu sắc -->
                                     <div class="mb-3">
-                                        <strong>Màu Sắc: <span id="selected-color">Chọn màu</span></strong>
+                                        <strong>Màu Sắc: <span id="selected-color"></span></strong>
                                         <div class="d-flex" id="color-options">
                                             @foreach ($mauSac as $index => $mau)
                                                 <label class="option color-option"
-                                                    style="cursor: pointer; position: relative;">
-                                                    <input type="radio" name="color"
-                                                        class="d-none variant-color-selector" value="{{ $index }}"
-                                                        data-mau="{{ $mau['gia_tri'] }}"
+                                                    style="cursor: pointer; position: relative;"data-color-name="{{ $mau['gia_tri'] }}">
+    
+                                                    <input type="radio" name="color" class="d-none variant-color-selector"
+                                                        value="{{ $index }}" data-mau="{{ $mau['gia_tri'] }}"
                                                         data-bienthes='@json($mau['bien_thes'])'
                                                         {{ $index === 0 ? 'checked' : '' }}>
                                                     <img src="{{ $mau['anh'] }}" alt="{{ $mau['gia_tri'] }}"
@@ -276,7 +286,7 @@
                                             @endforeach
                                         </div>
                                     </div>
-
+    
                                     <!-- Hiển thị danh sách kích thước -->
                                     <div class="mb-3">
                                         <strong>Size:</strong>
@@ -284,17 +294,20 @@
                                             <!-- Kích thước sẽ cập nhật bằng JavaScript -->
                                         </div>
                                     </div>
-
+    
                                     <!-- Hiển thị giá sản phẩm -->
                                     <div class="mt-3">
-                                        <strong>GIÁ:</strong>
-                                        <span id="product-price">0 VNĐ</span>
+                                        {{-- <strong>GIÁ:</strong>
+                                            <span id="product-price">0 VNĐ</span><br> --}}
+                                        <strong>Số lượng:</strong>
+                                        <span id="product-quantity"></span>
+    
                                     </div>
                                 </div>
-
-
-                                <div class="time deal-timer product-deal-timer mx-md-0 mx-auto" id="clockdiv-1"
-                                    data-hours="1" data-minutes="2" data-seconds="3">
+    
+    
+                                <div class="time deal-timer product-deal-timer mx-md-0 mx-auto" id="clockdiv-1" data-hours="1"
+                                    data-minutes="2" data-seconds="3">
                                     <div class="product-title">
                                         <h4>Khuyến mãi kết thúc sau</h4>
                                     </div>
@@ -333,163 +346,174 @@
                                         </li>
                                     </ul>
                                 </div>
-
-
-
+    
+    
+    
                                 <div class="note-box product-package">
                                     <div class="cart_qty qty-box product-qty">
                                         <div class="input-group">
                                             <button type="button" class="qty-left-minus" data-type="minus" data-field="">
                                                 <i class="fa fa-minus"></i>
                                             </button>
-                                            <input class="form-control input-number qty-input" type="text"
-                                                name="quantity" value="1">
-                                            <button type="button" class="qty-right-plus" data-type="plus"
-                                                data-field="">
+                                            <input class="form-control input-number qty-input" type="text" name="quantity"
+                                                value="1">
+                                            <button type="button" class="qty-right-plus" data-type="plus" data-field="">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
-
+    
                                     <button onclick="location.href = 'cart.html';"
                                         class="btn btn-md bg-dark cart-button text-white w-100">Thêm vào giỏ hàng</button>
                                 </div>
-
+    
                                 <div class="buy-box">
                                     <a href="wishlist.html">
                                         <i data-feather="heart"></i>
                                         <span>
                                             Thêm vào danh sách yêu thích</span>
                                     </a>
-
+                                    {{-- Liên hệ: 0387660612 --}}
+    
                                     {{-- <a href="compare.html">
-                                        <i data-feather="shuffle"></i>
-                                        <span>Add To Compare</span>
-                                    </a> --}}
-
+                                            <i data-feather="shuffle"></i>
+                                            <span>Add To Compare</span>
+                                        </a> --}}
+    
                                 </div>
-
+    
                                 <div class="pickup-box">
                                     {{-- <div class="product-title">
-                                        <h4>Mô tả</h4>
-                                    </div>
-
-                                    <div class="pickup-detail">
-                                        <h4 class="text-content w-100">{!! $sanPhams->mo_ta !!}</h4>
-                                    </div> --}}
-
-                                    <div class="product-info">
-                                        <ul class="product-info-list product-info-list-2">
-                                            <li>Danh mục :
-                                                <a href="javascript:void(0)">
-                                                    {{ $sanPhams->danhMuc->ten_danh_muc ?? 'Không có danh mục' }}
+                                            <h4>Mô tả</h4>
+                                        </div>
+    
+                                        <div class="pickup-detail">
+                                            <h4 class="text-content w-100">{!! $sanPhams->mo_ta !!}</h4>
+                                        </div> --}}
+    
+                                        <div class="product-info">
+                                            <ul class="product-info-list product-info-list-2">
+                                                <li>Danh mục :
+                                                    <a href="javascript:void(0)">
+                                                        {{ $sanPhams->danhMuc->ten_danh_muc ?? 'Không có danh mục' }}
+                                                    </a>
+                                                </li>
+    
+                                                <li>Ngày thêm :
+                                                    <a href="javascript:void(0)">
+                                                        {{ $sanPhams->created_at->format('d/m/Y') }}
+                                                    </a>
+                                                </li>
+    
+    
                                                 </a>
-                                            </li>
-
-                                            <li>Ngày thêm :
-                                                <a href="javascript:void(0)">
-                                                    {{ $sanPhams->created_at->format('d/m/Y') }}
-                                                </a>
-                                            </li>
-
-
-                                            </a>
-                                            </li>
-                                        </ul>
-
-                                    </div>
+                                                </li>
+                                            </ul>
+    
+                                        </div>
                                 </div>
 
-                                <div class="payment-option">
-                                    <div class="product-title">
-                                        <h4>Phương thức thanh toán</h4>
-                                    </div>
-                                    <ul>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/1.svg"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/2.svg"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/3.svg"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/4.svg"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">
-                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/5.svg"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-                                        </li>
-                                    </ul>
+                                
+                            <div class="payment-option">
+                                <div class="product-title">
+                                    <h4>Phương thức thanh toán</h4>
                                 </div>
+                                <ul>
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/1.svg"
+                                                class="blur-up lazyload" alt="">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/2.svg"
+                                                class="blur-up lazyload" alt="">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/3.svg"
+                                                class="blur-up lazyload" alt="">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/4.svg"
+                                                class="blur-up lazyload" alt="">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/5.svg"
+                                                class="blur-up lazyload" alt="">
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
+
+                            </div>
+
+
+
+
+
+
+
+                       
+
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
-                    <div class="right-sidebar-box">
-                        <div class="vendor-box">
-                            <div class="vendor-contain">
-
-
+            <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
+                <div class="right-sidebar-box">
+                    <div class="vendor-box">
+                        <div class="vendor-contain">
 
 
-                                <div class="vendor-list">
-                                    <ul>
-                                        <li>
-                                            <div class="address-contact">
-                                                <i data-feather="headphones"></i>
-                                                <h5>Liên hệ: <span class="text-content">0387660612
-                                                    </span></h5>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="address-contact">
-                                                <i data-feather="map-pin"></i>
-                                                <h5>Địa chỉ: </h5>
-                                            </div> <br>
-                                            <div
-                                                style="width: 100%; max-width: 600px; height: 400px; margin: 0 auto; overflow: hidden; border: 1px solid #ccc;">
-                                                <iframe
-                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.863806021129!2d105.74468151095591!3d21.038134787375412!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1sen!2sus!4v1742563208168!5m2!1sen!2sus"
-                                                    width="100%" height="100%" style="border:0;" allowfullscreen=""
-                                                    loading="lazy">
-                                                </iframe>
-                                            </div>
-                                        </li>
 
 
-                                    </ul>
-                                </div>
+                            <div class="vendor-list">
+                                <ul>
+                                    <li>
+                                        <div class="address-contact">
+                                            <i data-feather="headphones"></i>
+                                            <h5>Liên hệ: <span class="text-content">0387660612
+                                                </span></h5>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="address-contact">
+                                            <i data-feather="map-pin"></i>
+                                            <h5>Địa chỉ: </h5>
+                                        </div> <br>
+                                        <div
+                                            style="width: 100%; max-width: 600px; height: 400px; margin: 0 auto; overflow: hidden; border: 1px solid #ccc;">
+                                            <iframe
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.863806021129!2d105.74468151095591!3d21.038134787375412!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1sen!2sus!4v1742563208168!5m2!1sen!2sus"
+                                                width="100%" height="100%" style="border:0;" allowfullscreen=""
+                                                loading="lazy">
+                                            </iframe>
+                                        </div>
+                                    </li>
+
+
+                                </ul>
                             </div>
+                        </div>
 
-                            <div class="pt-25">
-                                <div class="hot-line-number">
-                                    <h5>Thời gian làm việc:</h5>
-                                    <h6>Thứ Hai - Thứ Sáu: 7:00 sáng - 8:30 tối
-                                    </h6>
-                                </div>
+                        <div class="pt-25">
+                            <div class="hot-line-number">
+                                <h5>Thời gian làm việc:</h5>
+                                <h6>Thứ Hai - Thứ Sáu: 7:00 sáng - 8:30 tối
+                                </h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </section>
     <!-- Product End -->
 
@@ -768,19 +792,17 @@
                     <form class="product-review-form">
                         <div class="product-wrapper">
                             <div class="product-image">
-                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}"
-                                class="img-fluid rounded shadow-sm"
-                                alt="{{ $sanPhams->ten_san_pham }}">
+                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}" class="img-fluid rounded shadow-sm"
+                                    alt="{{ $sanPhams->ten_san_pham }}">
                             </div>
                             <div class="product-content">
                                 <h5 class="name">{{ $sanPhams->ten_san_pham }}</h5>
                                 <div class="product-review-rating">
                                     <div class="product-rating">
                                         {{-- <h6 class="price-number">{{ number_format($sanPhams->gia_moi, 0, ',', '.') }} đ --}}
-                                            <span
-                                                    class="theme-color">{{ number_format($sanPhams->gia_moi, 0, ',', '.') }}
-                                                    ₫</span>
-                                                <del>{{ number_format($sanPhams->gia_cu, 0, ',', '.') }} ₫</del>
+                                        <span class="theme-color">{{ number_format($sanPhams->gia_moi, 0, ',', '.') }}
+                                            ₫</span>
+                                        <del>{{ number_format($sanPhams->gia_cu, 0, ',', '.') }} ₫</del>
 
                                         </h6>
                                     </div>
@@ -870,35 +892,70 @@
                 }
             });
         });
+    </script>
 
-
-
-
-
-
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            let colorInputs = document.querySelectorAll(".variant-color-selector");
             let colorOptions = document.querySelectorAll(".color-option");
-            let selectedColorText = document.getElementById("selected-color");
             let sizeContainer = document.querySelector("#size-options");
             let priceDisplay = document.querySelector("#product-price");
+            let quantityDisplay = document.querySelector("#product-quantity");
+            let priceLabel = document.querySelector(".price-label");
+            let mainPriceSection = document.querySelector(".price-rating");
+            let defaultPrice = document.querySelector("#default-price");
+            let defaultOldPrice = document.querySelector("#default-old-price");
+            let selectedColorText = document.querySelector("#selected-color"); // Hiển thị tên màu đã chọn
+            let productImage = document.querySelector("#product-image"); // Ảnh sản phẩm
 
-            // Danh sách kích thước theo thứ tự mong muốn
-            const sizeOrder = ["S", "M", "L", "XL", "XXL"];
+            function formatCurrency(value) {
+                return new Intl.NumberFormat("vi-VN").format(value) + "₫";
+            }
+
+            function updatePriceAndQuantity() {
+                let selectedSize = document.querySelector(".variant-size-selector:checked");
+                let discountLabel = document.querySelector(".offer-top"); // Phần trăm giảm giá
+
+                if (selectedSize) {
+                    let sizePrice = parseFloat(selectedSize.getAttribute("data-price"));
+                    let oldPrice = parseFloat(defaultOldPrice.innerText.replace("₫", "").replace(/\./g,
+                    "")); // Lấy giá cũ
+
+                    // Cập nhật giá mới
+                    priceDisplay.textContent = formatCurrency(sizePrice);
+                    quantityDisplay.textContent = selectedSize.getAttribute("data-quantity");
+
+                    // Ẩn giá mặc định và hiển thị giá mới
+                    defaultPrice.style.display = "none";
+                    priceLabel.style.display = "inline";
+                    priceDisplay.style.display = "inline";
+
+                    // **Tính phần trăm giảm giá mới**
+                    if (oldPrice > 0 && sizePrice < oldPrice) {
+                        let discountPercent = Math.round(100 - (sizePrice / oldPrice) * 100);
+                        discountLabel.textContent = `(${discountPercent}% off)`;
+                        discountLabel.style.visibility =
+                        "visible"; // Hiện phần trăm giảm giá nhưng giữ nguyên kích thước
+                    } else {
+                        discountLabel.style.visibility = "hidden"; // Ẩn nhưng giữ không gian
+                    }
+                }
+            }
+
+
 
             function updateSizes(bienThes) {
                 sizeContainer.innerHTML = ""; // Xóa danh sách size cũ
 
                 if (bienThes.length === 0) {
                     sizeContainer.innerHTML = "<p>Không có size phù hợp.</p>";
-                    priceDisplay.innerText = "0 VNĐ"; // Không set giá mặc định
+                    priceDisplay.innerText = formatCurrency(0);
+                    quantityDisplay.innerText = "0";
                     return;
                 }
 
-                // Sắp xếp size theo thứ tự mong muốn
-                bienThes.sort((a, b) => {
-                    return sizeOrder.indexOf(a.gia_tri) - sizeOrder.indexOf(b.gia_tri);
-                });
+                // **Sắp xếp size theo thứ tự S → M → L → XL → XXL**
+                let sizeOrder = ["S", "M", "L", "XL", "XXL"];
+                bienThes.sort((a, b) => sizeOrder.indexOf(a.gia_tri) - sizeOrder.indexOf(b.gia_tri));
 
                 bienThes.forEach((size, index) => {
                     let label = document.createElement("label");
@@ -906,7 +963,8 @@
                     label.style.cursor = "pointer";
                     label.innerHTML = `
                 <input type="radio" name="size" class="d-none variant-size-selector"
-                    value="${size.id}" data-price="${size.gia_ban}">
+                    value="${size.id}" data-price="${size.gia_ban}" data-quantity="${size.so_luong}"
+                    ${index === 0 ? "checked" : ""}> <!-- Chọn size đầu tiên mặc định -->
                 <span class="option-box">${size.gia_tri}</span>
             `;
                     sizeContainer.appendChild(label);
@@ -914,64 +972,58 @@
 
                 attachSizeEvents();
 
-                // Tự động chọn size đầu tiên nếu có
-                let firstSize = document.querySelector(".variant-size-selector");
-                if (firstSize) {
-                    firstSize.checked = true;
-                    updatePrice();
-                }
-            }
-
-            function updatePrice() {
-                let selectedSize = document.querySelector(".variant-size-selector:checked");
-                if (selectedSize) {
-                    let sizePrice = selectedSize.getAttribute("data-price");
-                    priceDisplay.innerText = sizePrice + " VNĐ";
-                } else {
-                    priceDisplay.innerText = "0 VNĐ"; // Nếu chưa chọn size, giữ nguyên 0 VNĐ
-                }
+                // **Tự động cập nhật giá & số lượng của size đầu tiên**
+                updatePriceAndQuantity();
             }
 
             function attachSizeEvents() {
                 let sizeInputs = document.querySelectorAll(".variant-size-selector");
                 sizeInputs.forEach(input => {
                     input.addEventListener("change", function() {
-                        updatePrice();
+                        updatePriceAndQuantity();
                     });
                 });
             }
 
-            colorInputs.forEach(input => {
-                input.addEventListener("change", function() {
-                    let bienThes = JSON.parse(this.getAttribute("data-bienthes"));
-                    updateSizes(bienThes);
-                });
-            });
-
             colorOptions.forEach(option => {
                 option.addEventListener("click", function() {
-                    let colorName = this.querySelector(".color-img").alt;
-                    selectedColorText.innerText = colorName;
-
+                    // Xóa class 'selected' của các màu khác
                     colorOptions.forEach(opt => opt.classList.remove("selected"));
-                    this.classList.add("selected");
+                    this.classList.add("selected"); // Thêm class 'selected' vào màu được chọn
 
-                    this.querySelector("input[type='radio']").checked = true;
+                    // **Cập nhật tên màu sắc**
+                    let colorName = this.getAttribute("data-color-name");
+                    if (colorName) {
+                        selectedColorText.innerText = colorName; // Hiển thị màu được chọn
+                    } else {
+                        selectedColorText.innerText = "Không xác định"; // Nếu không có tên màu
+                    }
+                    console.log("Tên màu lấy được:", colorName); // Kiểm tra giá trị lấy được
 
+
+                    // Lấy dữ liệu biến thể từ radio button bên trong
                     let bienThes = JSON.parse(this.querySelector("input[type='radio']")
                         .getAttribute("data-bienthes"));
+
+                    // **Cập nhật ảnh biến thể nếu có**
+                    let imageUrl = this.getAttribute("data-image");
+                    if (imageUrl) {
+                        productImage.src = imageUrl;
+                    }
+
                     updateSizes(bienThes);
                 });
             });
 
-            // Không tự động chọn màu hoặc size khi load trang
-            priceDisplay.innerText = "0 VNĐ";
+            // Ẩn giá biến thể ban đầu
+            priceLabel.style.display = "none";
+            priceDisplay.style.display = "none";
         });
+    </script>
 
 
 
-
-
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             var swiper = new Swiper('.swiper-container', {
                 slidesPerView: 6, // Hiển thị 6 sản phẩm cùng lúc
