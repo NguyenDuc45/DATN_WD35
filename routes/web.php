@@ -23,10 +23,11 @@ use App\Http\Controllers\DanhMucBaiVietController;
 use App\Http\Controllers\DanhMucSanPhamController;
 use App\Http\Controllers\GiaTriThuocTinhController;
 use App\Http\Controllers\Admins\Auth\AuthController;
+use App\Http\Controllers\Clients\ThanhToanController;
+use App\Http\Controllers\Clients\IndexClientController;
 use App\Http\Controllers\ClientDanhMucSanPhamController;
 use App\Http\Controllers\Admins\Responsibility\RoleController;
 use App\Http\Controllers\Admins\Responsibility\PermissionController;
-use App\Http\Controllers\Clients\IndexClientController;
 use App\Http\Controllers\Clients\UserController as ClientsUserController;
 use App\Http\Controllers\Clients\Auth\AuthController as AuthAuthController;
 
@@ -171,3 +172,8 @@ Route::get('clientdanhmucsanpham', [ClientDanhMucSanPhamController::class, 'inde
 Route::get('/clientsanpham', [ClientDanhMucSanPhamController::class, 'danhSachSanPham'])->name('clientsanpham.danhsach');
 Route::get('/top-san-pham', [SanPhamController::class, 'sanPhamTopDanhGia'])->name('sanpham.top_danh_gia');
 Route::post('/lienhe', [ContactController::class, 'send'])->name('send.contact');
+
+
+Route::post('/vnpay/payment', [ThanhToanController::class, 'createPayment'])->name('vnpay.payment');
+Route::get('/vnpay/return', [ThanhToanController::class, 'returnPayment'])->name('vnpay.return');
+Route::get('/phuongthucthanhtoan', [ThanhToanController::class, 'phuongThucThanhToan'])->name('list');

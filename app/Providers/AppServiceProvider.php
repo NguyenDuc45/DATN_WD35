@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\ChiTietGioHang;
 use App\Models\Setting;
+use App\Models\ChiTietGioHang;
 use App\Models\DanhMucSanPham;
+use App\Models\PhuongThucThanhToan;
 use App\Models\ClientDanhMucSanPham;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -45,5 +46,7 @@ class AppServiceProvider extends ServiceProvider
             // dd($total); // Debug để kiểm tra tổng
             $view->with(compact('gioHang', 'total'));
         });
+        $phuongThucThanhToan = PhuongThucThanhToan::all();
+        View::share('phuongThucThanhToan', $phuongThucThanhToan);
     }
 }
