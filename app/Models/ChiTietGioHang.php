@@ -12,6 +12,7 @@ class ChiTietGioHang extends Model
     public $fillable = [
         'user_id',
         'bien_the_id',
+        'san_pham_id',
         'so_luong'
     ];
 
