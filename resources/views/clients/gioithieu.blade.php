@@ -377,13 +377,13 @@ Giới thiệu
 <section class="section-lg-space">
     <div class="container-fluid-lg">
         <div class="about-us-title text-center">
-            <h4 class="text-content">Our Blog</h4>
-            <h2 class="center">Our Latest Blog</h2>
+            <h4 class="text-content">Blog của chúng tôi</h4>
+            <h2 class="center">Blog mới nhất của chúng tôi</h2>
         </div>
         <div class="row">
             <div class="col-12">
                 <div class="slider-5 ratio_87">
-                    @if (isset($baiViets) && $baiViets->count() > 0)
+                    @if ($baiViets->count() > 0)
                     @foreach ($baiViets as $baiViet)
                     <div>
                         <div class="blog-box">
@@ -391,7 +391,8 @@ Giới thiệu
                                 <div class="blog-image">
                                     <a href="{{ route('baiviets.chitiet', $baiViet->id) }}" class="rounded-3">
                                         <img src="{{ asset($baiViet->anh_bia) }}"
-                                            class="bg-img blur-up lazyload" alt="{{ $baiViet->tieu_de }}">
+                                            class="bg-img blur-up lazyload"
+                                            alt="{{ $baiViet->tieu_de }}">
                                     </a>
                                 </div>
                             </div>
@@ -400,6 +401,7 @@ Giới thiệu
                                 class="blog-detail d-block">
                                 <h6>{{ $baiViet->danhMuc->ten_danh_muc ?? 'Chưa có danh mục' }}</h6>
                                 <h5>{{ $baiViet->tieu_de }}</h5>
+                                <p class="text-muted">{{ date('d/m/Y', strtotime($baiViet->created_at)) }}</p>
                             </a>
                         </div>
                     </div>
@@ -412,6 +414,7 @@ Giới thiệu
         </div>
     </div>
 </section>
+
 <!-- Blog Section End -->
 @endsection
 
