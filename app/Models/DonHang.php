@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class DonHang extends Model
 {
     use HasFactory;
@@ -22,6 +23,8 @@ class DonHang extends Model
         'trang_thai_don_hang',
         'trang_thai_thanh_toan'
     ];
+    protected $table = 'don_hangs'; // Nếu bảng có tên khác thì cập nhật tại đây
+
 
     public function user(){
         return $this->belongsTo(SanPhamYeuThich::class, 'user_id');
@@ -32,4 +35,9 @@ class DonHang extends Model
     return $this->belongsToMany(BienThe::class, 'chi_tiet_don_hangs', 'don_hang_id', 'bien_the_id')
                 ->withPivot('so_luong');
 }
+public function chiTietDonHangs()
+{
+    return $this->hasMany(ChiTietDonHang::class, 'don_hang_id');
+}
+
 }

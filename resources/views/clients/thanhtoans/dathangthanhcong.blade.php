@@ -83,6 +83,19 @@
 @endsection
 
 @section('content')
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+@section('content')
     <!-- Cart Section Start -->
     <section class="cart-section section-b-space">
         <div class="container-fluid-lg">
