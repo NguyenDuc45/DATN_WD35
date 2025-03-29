@@ -106,6 +106,7 @@
                                         <div class="checkout-detail">
                                             <div class="accordion accordion-flush custom-accordion" id="accordionFlushExample">
                                                 @foreach ($phuongThucThanhToan as $item)
+                                                
                                                     @if ($item->trang_thai == 1)
                                                         <div class="accordion-item">
                                                             <div class="accordion-header" id="flush-heading{{ $item->id }}">
@@ -118,7 +119,7 @@
                                                                                 
                                                                                 data-method="{{ $item->ten_phuong_thuc }}"
                                                                                 data-id="{{ $item->id }}" {{ $item->id == 1 ? 'checked' : '' }}>
-                                                                                {{-- {{ $loop->first ? 'checked' : '' }}> --}}
+                                                                              
                                                                             {{ $item->ten_phuong_thuc }}
                                                                         </label>
                                                                     </div>
@@ -133,7 +134,7 @@
                                                                 data-bs-parent="#accordionFlushExample">
                                                                 <div class="accordion-body">
                                                                     <p>Chọn ngân hàng:</p>
-                                                                    <select id="bank_code" class="form-control">
+                                                                    <select id="bank_code" name="bank_code" class="form-control">
                                                                         <option value="">Chọn ngân hàng</option>
                                                                         <option value="NCB">Ngân hàng NCB</option>
                                                                         <option value="BIDV">BIDV</option>

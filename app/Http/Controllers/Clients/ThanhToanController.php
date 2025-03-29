@@ -102,8 +102,9 @@ class ThanhToanController extends Controller
                         'id' => $donHang->id
                     ],200);
     
-                } elseif($request->phuong_thuc_thanh_toan_id === "2") {
+                } elseif($request->phuong_thuc_thanh_toan_id == 2) {
                     // 🔹 Nếu là VNPAY, chuyển hướng đến cổng thanh toán trước, không tạo đơn hàng
+                    dd($request->all());
                     return app(ThanhToanController::class)->createPayment(new Request([
                         'amount' => $request->tong_tien,
                         'bank_code' => $request->bank_code
@@ -152,8 +153,8 @@ class ThanhToanController extends Controller
     }
     public function createPayment(Request $request)
     {
-        dd($request->all());
-        
+        // dd($request->all());
+
         $request->validate([
             'amount' => 'required|numeric|min:1000',
             'bank_code' => 'required'
