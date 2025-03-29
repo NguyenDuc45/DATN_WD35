@@ -31,10 +31,15 @@ class ThanhToanController extends Controller
             ->join('san_phams', 'san_phams.id', '=', 'san_pham_id')
             ->where('user_id', '=', Auth::user()->id)
             ->get();
-
-        return view('clients.thanhtoans.thanhtoan', compact('chiTietGioHangs'));
+    
+        // Tính tổng tiền sau khi giảm giá
+        $total_after = $chiTietGioHangs->sum(function ($item) {
+            return $item->gia_moi * $item->so_luong;
+        });
+    
+        return view('clients.thanhtoans.thanhtoan', compact('chiTietGioHangs', 'total_after'));
     }
-
+    
     public function datHangThanhCong()
     {
         $donHang = DonHang::select('don_hangs.*', 'phuong_thuc_thanh_toans.ten_phuong_thuc')
