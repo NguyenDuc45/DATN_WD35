@@ -132,7 +132,19 @@ Thanh toán
                                                         </ul>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div class="mt-3">
+                                                    <label for="">Số điện thoại:</label>
+                                                    <input class="form-control" type="number" name="sdt_nguoi_nhan" value="{{ Auth::user()->so_dien_thoai ?? '' }}">
+                                                </div>
+                                                <div class="mt-3">
+                                                    <label for="">Địa chỉ:</label>
+                                                    <input class="form-control" type="text" name="dia_chi_nguoi_nhan" value="{{ Auth::user()->dia_chi ?? '' }}">
+                                                </div>
+                                                <div class="mt-3">
+                                                    <label for="">Ghi chú:</label>
+                                                    <input class="form-control" type="text" name="ghi_chu" value="{{ old('ghi_chu') ?? '' }}">
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
