@@ -1,58 +1,57 @@
 @extends('layouts.client')
 
 @section('title')
-    Thanh toán
+Thanh toán
 @endsection
 
 @section('css')
 @endsection
 
 @section('breadcrumb')
-    <section class="breadcrumb-section pt-0">
-        <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadcrumb-contain">
-                        <h2>Thanh toán</h2>
-                        <nav>
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('home') }}">
-                                        <i class="fa-solid fa-house"></i>
-                                    </a>
-                                </li>
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Thanh toán</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('home') }}">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
 
-                                <li class="breadcrumb-item active">Thanh toán</li>
-                            </ol>
-                        </nav>
-                    </div>
+                            <li class="breadcrumb-item active">Thanh toán</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 @endsection
 
 @section('content')
-    <!-- Checkout section Start -->
-    <section class="checkout-section-2 section-b-space">
-        <div class="container-fluid-lg">
-            <div class="row g-sm-4 g-3">
-                <div class="col-lg-8">
-                    <div class="left-sidebar-checkout">
-                        <div class="checkout-detail-box">
-                            <ul>
-                                <li>
-                                    <div class="checkout-icon">
-                                        <lord-icon target=".nav-item" src="https://cdn.lordicon.com/ggihhudh.json"
-                                            trigger="loop-on-hover"
-                                            colors="primary:#121331,secondary:#646e78,tertiary:#0baf9a" class="lord-icon">
-                                        </lord-icon>
+<!-- Checkout section Start -->
+<section class="checkout-section-2 section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row g-sm-4 g-3">
+            <div class="col-lg-8">
+                <div class="left-sidebar-checkout">
+                    <div class="checkout-detail-box">
+                        <ul>
+                            <li>
+                                <div class="checkout-icon">
+                                    <lord-icon target=".nav-item" src="https://cdn.lordicon.com/ggihhudh.json"
+                                        trigger="loop-on-hover"
+                                        colors="primary:#121331,secondary:#646e78,tertiary:#0baf9a" class="lord-icon">
+                                    </lord-icon>
+                                </div>
+                                <div class="checkout-box">
+                                    <div class="checkout-title">
+                                        <h4>Địa chỉ nhận hàng</h4>
                                     </div>
-                                    <div class="checkout-box">
-                                        <div class="checkout-title">
-                                            <h4>Địa chỉ nhận hàng</h4>
-                                        </div>
-
                                         <div class="checkout-detail">
                                             <form action="{{ route('thanhtoans.xuLy') }}" method="POST" id="checkoutForm">
                                                 @csrf
@@ -89,14 +88,19 @@
                                             </form>
                                         </div>
                                     </div>
-                                </li>
+                                </div>
+                            </li>
 
-                                <li>
-                                    <div class="checkout-icon">
-                                        <lord-icon target=".nav-item" src="https://cdn.lordicon.com/qmcsqnle.json"
-                                            trigger="loop-on-hover" colors="primary:#0baf9a,secondary:#0baf9a"
-                                            class="lord-icon">
-                                        </lord-icon>
+                            <li>
+                                <div class="checkout-icon">
+                                    <lord-icon target=".nav-item" src="https://cdn.lordicon.com/qmcsqnle.json"
+                                        trigger="loop-on-hover" colors="primary:#0baf9a,secondary:#0baf9a"
+                                        class="lord-icon">
+                                    </lord-icon>
+                                </div>
+                                <div class="checkout-box">
+                                    <div class="checkout-title">
+                                        <h4>Hình thức thanh toán</h4>
                                     </div>
                                     <div class="checkout-box">
                                         <div class="checkout-title">
@@ -167,7 +171,7 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
                 <div class="col-lg-4">
                     <div class="right-side-summery-box">
                         <div class="summery-box-2">
@@ -228,6 +232,9 @@
                             Đặt hàng
                         </a>
                     </div>
+
+                    <a href="{{ route('thanhtoans.dathangthanhcong') }}"
+                        class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Đặt hàng</a>
                 </div>
             </div>
         </div>
@@ -327,9 +334,6 @@
         });
     });
 });
-
-
-
     </script>
     <script>
         let phiVanChuyen = document.getElementById("phi-van-chuyen");
@@ -422,10 +426,6 @@
             });
         });
 
-
-
-
-
         function showTong() {
             let giaMois = document.getElementsByClassName("gia-moi");
             let soLuongs = document.getElementsByClassName("so-luong");
@@ -456,10 +456,10 @@
             let total = sum - giamGiaValue + phiVanChuyenValue;
             tongTien.innerHTML = total.toLocaleString("vi-VN");
         }
+        
         showTong()
 
         $(document).ready(function () {
-
             function updateHiddenInputs() {
                 // Lấy giá trị từ HTML và chuyển thành số
                 let tongSanPham = parseInt($('#tong-tien').text().replace(/\D/g, '')) || 0;
@@ -537,8 +537,6 @@
                 });
             });
         });
-
-
     </script>
 
     <script>
@@ -607,5 +605,4 @@
             }
         });
     </script>
-
 @endsection

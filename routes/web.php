@@ -30,6 +30,9 @@ use App\Http\Controllers\Admins\Responsibility\RoleController;
 use App\Http\Controllers\Admins\Responsibility\PermissionController;
 use App\Http\Controllers\Clients\UserController as ClientsUserController;
 use App\Http\Controllers\Clients\Auth\AuthController as AuthAuthController;
+use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\CheckoutController;
+
 
 // Login Admin Controller
 Route::prefix('/admin')->controller(AuthController::class)->group(function () {
@@ -172,7 +175,6 @@ Route::get('clientdanhmucsanpham', [ClientDanhMucSanPhamController::class, 'inde
 Route::get('/clientsanpham', [ClientDanhMucSanPhamController::class, 'danhSachSanPham'])->name('clientsanpham.danhsach');
 Route::get('/top-san-pham', [SanPhamController::class, 'sanPhamTopDanhGia'])->name('sanpham.top_danh_gia');
 Route::post('/lienhe', [ContactController::class, 'send'])->name('send.contact');
-
 
 Route::post('/vnpay/payment', [ThanhToanController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay/return', [ThanhToanController::class, 'returnPayment'])->name('vnpay.return');
