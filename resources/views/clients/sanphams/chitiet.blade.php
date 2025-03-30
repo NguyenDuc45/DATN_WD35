@@ -633,6 +633,7 @@
                                                             @endphp
 
                                                             <div class="col-xl-12">
+                                                                babab
                                                                 <ul class="product-rating-list">
                                                                     @foreach ($soSao as $sao)
                                                                         @php
