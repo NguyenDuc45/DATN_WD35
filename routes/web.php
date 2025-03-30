@@ -148,12 +148,15 @@ Route::get('/huongdan/{id}', [App\Http\Controllers\Clients\HuongDanController::c
 Route::get('/giohang', [App\Http\Controllers\Clients\GioHangController::class, 'gioHang'])->name('giohang');
 Route::post('/post-giohang', [App\Http\Controllers\Clients\GioHangController::class, 'storegioHang'])->name('post.giohang');
 Route::post('/xoa-gio-hang', [App\Http\Controllers\Clients\GioHangController::class, 'xoagioHang'])->name('delete.giohang');
+Route::post('/accept-thanh-toan', [App\Http\Controllers\Clients\GioHangController::class, 'acceptThanhToan'])->name('accept.giohang');
+
 Route::post('/nhap-voucher', [App\Http\Controllers\Clients\GioHangController::class, 'nhapvoucher'])->name('voucher.giohang');
 
 
 
 Route::get('/thanhtoan', [App\Http\Controllers\Clients\ThanhToanController::class, 'thanhToan'])->name('thanhtoans.thanhtoan');
-Route::get('/dathangthanhcong', [App\Http\Controllers\Clients\ThanhToanController::class, 'datHangThanhCong'])->name('thanhtoans.dathangthanhcong');
+Route::post('/thanhtoan-xu-ly', [App\Http\Controllers\Clients\ThanhToanController::class, 'xuLyThanhToan'])->name('thanhtoans.xuLy');
+Route::get('/dathangthanhcong/{id}', [App\Http\Controllers\Clients\ThanhToanController::class, 'datHangThanhCong'])->name('thanhtoans.dathangthanhcong');
 
 Route::get('/users', [App\Http\Controllers\Clients\UserController::class, 'chiTiet'])->name('users.chitiet');
 Route::put('/users/update-infor/{id}', [App\Http\Controllers\Clients\UserController::class, 'updateInfor'])->name('users.update');
@@ -174,5 +177,6 @@ Route::get('/top-san-pham', [SanPhamController::class, 'sanPhamTopDanhGia'])->na
 Route::post('/lienhe', [ContactController::class, 'send'])->name('send.contact');
 
 Route::get('/san-pham/{id}/bien-the', [SanPhamController::class, 'getBienThe']);
+Route::post('/danhgias/toggle-status', [DanhGiaController::class, 'trangThaiDanhGia'])->name('danhgias.trangthaidanhgia');
 
 

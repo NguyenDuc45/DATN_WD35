@@ -216,66 +216,76 @@
             gap: 10px;
             /* Tạo khoảng cách giữa các phần tử */
         }
+
         .product-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px; /* Khoảng cách giữa các phần tử */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            /* Khoảng cách giữa các phần tử */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
 
-.product-image img {
-    width: 100px; /* Định kích thước ảnh */
-    height: 100px;
-    object-fit: cover;
-}
+        .product-image img {
+            width: 100px;
+            /* Định kích thước ảnh */
+            height: 100px;
+            object-fit: cover;
+        }
 
-.product-content {
-    flex: 1; /* Cho phép phần nội dung mở rộng */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+        .product-content {
+            flex: 1;
+            /* Cho phép phần nội dung mở rộng */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-.name {
-    margin: 0;
-    font-size: 16px;
-    font-weight: bold;
-}
+        .name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
-.product-review-rating {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+        .product-review-rating {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-.product-rating {
-    display: flex;
-    flex-direction: column; /* Xếp giá thành 2 dòng */
-    align-items: flex-start; /* Căn trái */
-    text-align: left;
-}
+        .product-rating {
+            display: flex;
+            flex-direction: column;
+            /* Xếp giá thành 2 dòng */
+            align-items: flex-start;
+            /* Căn trái */
+            text-align: left;
+        }
 
-.theme-color {
-    color: #009970; /* Màu xanh tương tự ảnh */
-    font-weight: bold;
-    font-size: 16px;
-    display: block;
-    width: 100%; /* Đảm bảo cùng độ rộng */
-}
+        .theme-color {
+            color: #009970;
+            /* Màu xanh tương tự ảnh */
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            /* Đảm bảo cùng độ rộng */
+        }
 
-del {
-    color: gray;
-    font-size: 14px;
-    margin-top: 2px;
-    display: block;
-    width: 100%; /* Đảm bảo cùng độ rộng */
-}
-.review-box{
-    margin: 5px 0;
-}
+        del {
+            color: gray;
+            font-size: 14px;
+            margin-top: 2px;
+            display: block;
+            width: 100%;
+            /* Đảm bảo cùng độ rộng */
+        }
+
+        .review-box {
+            margin: 5px 0;
+        }
     </style>
 @endsection
 
@@ -668,8 +678,8 @@ del {
                                                 <div class="col-xl-7">
                                                     <div class="review-people">
                                                         <ul class="review-list">
-                                                            @if ($sanPhams->danhGias->count() > 0)
-                                                                @foreach ($sanPhams->danhGias->sortByDesc('created_at') as $danhGia)
+                                                            @if ($sanPhams->danhGias->where('trang_thai', 1)->count() > 0)
+                                                                @foreach ($sanPhams->danhGias->where('trang_thai', 1)->sortByDesc('created_at') as $danhGia)
                                                                     <li>
                                                                         <div class="people-box">
                                                                             <div>
@@ -681,7 +691,9 @@ del {
                                                                             <div class="people-comment">
                                                                                 <div class="people-name">
                                                                                     <a href="javascript:void(0)"
-                                                                                        class="name">{{ $danhGia->nguoiDung->ten_nguoi_dung }}</a>
+                                                                                        class="name">
+                                                                                        {{ $danhGia->nguoiDung->ten_nguoi_dung }}
+                                                                                    </a>
                                                                                     <div class="date-time">
                                                                                         <h6 class="text-content">
                                                                                             {{ \Carbon\Carbon::parse($danhGia->created_at)->format('d/m/Y H:i') }}
@@ -691,7 +703,8 @@ del {
                                                                                                 @for ($i = 1; $i <= 5; $i++)
                                                                                                     <li>
                                                                                                         <i data-feather="star"
-                                                                                                            class="{{ $i <= $danhGia->so_sao ? 'fill' : '' }}"></i>
+                                                                                                            class="{{ $i <= $danhGia->so_sao ? 'fill' : '' }}">
+                                                                                                        </i>
                                                                                                     </li>
                                                                                                 @endfor
                                                                                             </ul>
@@ -708,13 +721,10 @@ del {
                                                             @else
                                                                 <p style="color: red">Chưa có đánh giá nào.</p>
                                                             @endif
-
-
-
-
                                                         </ul>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -816,6 +826,7 @@ del {
     <!-- Related Product Section End -->
 
     <!-- Review Modal Start -->
+
     <div class="modal fade theme-modal question-modal" id="writereview" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -825,6 +836,18 @@ del {
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
+                @if (session('error_binhluan'))
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            Swal.fire({
+                                title: "Lỗi bình luận!",
+                                text: "{{ session('error_binhluan') }}",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        });
+                    </script>
+                @endif
                 <div class="modal-body pt-0">
                     <form id="reviewForm" method="POST"
                         action="{{ route('sanphams.themdanhgia', ['san_pham_id' => $sanPhams->id]) }}">
@@ -832,10 +855,10 @@ del {
                         <input type="hidden" name="san_pham_id" value="{{ $sanPhams->id }}">
                         <input type="hidden" name="so_sao" id="so_sao" value="5"> <!-- Giá trị mặc định -->
 
-                        <div class="product-wrapper" >
+                        <div class="product-wrapper">
                             <div class="product-image">
-                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}" class="img-fluid rounded shadow-sm" style="witdh:100%; height:100%;"
-                                    alt="{{ $sanPhams->ten_san_pham }}">
+                                <img src="{{ Storage::url($sanPhams->hinh_anh) }}" class="img-fluid rounded shadow-sm"
+                                    style="witdh:100%; height:100%;" alt="{{ $sanPhams->ten_san_pham }}">
                             </div>
                             <div class="product-content">
                                 <h5 class="name">{{ $sanPhams->ten_san_pham }}</h5>
@@ -862,20 +885,19 @@ del {
 
                         <div class="review-box">
                             <label for="nhan_xet" class="form-label">Nhận xét của bạn *</label>
-                            <textarea id="nhan_xet" name="nhan_xet" rows="3" class="form-control" placeholder="Viết nhận xét của bạn..."
-                                required></textarea>
+                            <textarea id="nhan_xet" name="nhan_xet" rows="3" class="form-control"
+                                placeholder="Viết nhận xét của bạn..."></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-md btn-theme-outline fw-bold"
                                 data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-md fw-bold text-light theme-bg-color"
-                                >Gửi</button>
+                            <button type="submit" class="btn btn-md fw-bold text-light theme-bg-color">Gửi</button>
                         </div>
                         {{-- <button type="submit" class="btn btn-primary mt-3">Gửi đánh giá</button> --}}
                     </form>
 
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -886,51 +908,6 @@ del {
 @endsection
 
 @section('js')
-    <script>
-        function loadDanhGias() {
-            let sanPhamId = document.getElementById("san_pham_id").value;
-
-            fetch(`/san-pham/${sanPhamId}/danh-gia`)
-                .then(response => response.json())
-                .then(data => {
-                    let danhGiaHtml = "";
-                    data.forEach(danhGia => {
-                        danhGiaHtml +=
-                            `<p><strong>${danhGia.nguoi_dung.ten_nguoi_dung}</strong> (${danhGia.so_sao}⭐): ${danhGia.nhan_xet}</p>`;
-                    });
-                    document.getElementById("danhGias").innerHTML = danhGiaHtml;
-                });
-        }
-    </script>
-
-    <script>
-        function themDanhGia() {
-            let sanPhamId = document.getElementById("san_pham_id").value;
-            let soSao = document.getElementById("so_sao").value;
-            let nhanXet = document.getElementById("nhan_xet").value;
-
-            fetch(`/san-pham/${sanPhamId}/danh-gia`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                    },
-                    body: JSON.stringify({
-                        so_sao: soSao,
-                        nhan_xet: nhanXet
-                    })
-                })
-                .then(response => response.json())
-                .then(() => {
-                    var myModal = bootstrap.Modal.getInstance(document.getElementById('writereview'));
-                    myModal.hide();
-
-                    document.getElementById("nhan_xet").value = "";
-
-                    loadDanhGias();
-                });
-        }
-    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let colorInputs = document.querySelectorAll(".variant-color-selector");
@@ -1178,4 +1155,50 @@ del {
             });
         });
     </script>
+
+    {{-- <script>
+    function loadDanhGias() {
+        let sanPhamId = document.getElementById("san_pham_id").value;
+
+        fetch(`/san-pham/${sanPhamId}/danh-gia`)
+            .then(response => response.json())
+            .then(data => {
+                let danhGiaHtml = "";
+                data.forEach(danhGia => {
+                    danhGiaHtml +=
+                        `<p><strong>${danhGia.nguoi_dung.ten_nguoi_dung}</strong> (${danhGia.so_sao}⭐): ${danhGia.nhan_xet}</p>`;
+                });
+                document.getElementById("danhGias").innerHTML = danhGiaHtml;
+            });
+    }
+</script> --}}
+
+    {{-- <script>
+    function themDanhGia() {
+        let sanPhamId = document.getElementById("san_pham_id").value;
+        let soSao = document.getElementById("so_sao").value;
+        let nhanXet = document.getElementById("nhan_xet").value;
+
+        fetch(`/san-pham/${sanPhamId}/danh-gia`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                },
+                body: JSON.stringify({
+                    so_sao: soSao,
+                    nhan_xet: nhanXet
+                })
+            })
+            .then(response => response.json())
+            .then(() => {
+                var myModal = bootstrap.Modal.getInstance(document.getElementById('writereview'));
+                myModal.hide();
+
+                document.getElementById("nhan_xet").value = "";
+
+                loadDanhGias();
+            });
+    }
+</script> --}}
 @endsection

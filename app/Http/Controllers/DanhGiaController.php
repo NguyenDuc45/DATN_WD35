@@ -89,6 +89,29 @@ class DanhGiaController extends Controller
         return view('clients.gioithieu', compact('danhGias'));
     }
 
-    // Hiển thị danh sách đánh giá của một sản phẩm
+    // public function trangThaiDanhGia(Request $request)
+    // {
+    //     $danhGia = DanhGia::find($request->id);
+        
+    //     if (!$danhGia) {
+    //         return response()->json(['success' => false, 'message' => 'Đánh giá không tồn tại']);
+    //     }
+    
+    //     $danhGia->trang_thai = !$danhGia->trang_thai;
+    //     $danhGia->save();
+    
+    //     return response()->json(['success' => true, 'status' => $danhGia->trang_thai]);
+    // }
+    
+    public function trangThaiDanhGia(Request $request)
+{
+    $danhGia = DanhGia::find($request->id);
+    if ($danhGia) {
+        $danhGia->trang_thai = $danhGia->trang_thai == 1 ? 0 : 1;
+        $danhGia->save();
+        return response()->json(['success' => true, 'status' => $danhGia->trang_thai]);
+    }
+    return response()->json(['success' => false, 'message' => 'Đánh giá không tồn tại.']);
+}
     
 }
