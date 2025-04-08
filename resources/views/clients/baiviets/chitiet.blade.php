@@ -103,107 +103,82 @@
                         <p class="first-letter">{!! nl2br(e($baiViet->noi_dung)) !!}</p>
                     </div>
 
-                </div>
-                <div class="comment-box overflow-hidden">
-                    <div class="leave-title">
-                        <p><span class="fw-bold" style="font-size: 16px ">Bình luận : </span>{{ $countComment }} lượt</p>
+                    <div class="blog-detail-contain mt-4 mb-4">
+                        <p class="first-letter">{!! nl2br(e($baiViet->noi_dung)) !!}</p>
                     </div>
 
-                    @foreach ($comments as $comment)
-                        <div class="card mb-4 shadow-sm p-3 border-0">
-                            <div class="d-flex">
-                                {{-- Avatar người bình luận --}}
-                                @if ($comment->user && $comment->user->avatar)
-                                    <img src="{{ env('VIEW_IMG') }}/{{ $comment->user->avatar }}"
+                    {{-- Di chuyển comment box vào trong phần bài viết --}}
+                    <div class="comment-box overflow-hidden">
+                        <div class="leave-title mb-3">
+                            <p><span class="fw-bold" style="font-size: 16px">Bình luận:</span> {{ $binhLuans->count() }} lượt</p>
+                        </div>
+
+                        @foreach ($binhLuans as $binhLuan)
+                            <div class="card mb-4 shadow-sm p-3 border-0">
+                                <div class="d-flex">
+                                    {{-- Avatar --}}
+                                    <img src="{{ $binhLuan->user->avatar ? env('VIEW_IMG') . '/' . $binhLuan->user->avatar : asset('clients/img/avatar-default.jpg') }}"
                                         class="rounded-circle me-3 border"
                                         style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
-                                @else
-                                    <img src="{{ env('APP_URL') }}/clients/img/avatar-default.jpg"
-                                        class="rounded-circle me-2 border"
-                                        style="width: 50px; height: 50px; object-fit: cover;" alt="Avatar">
-                                @endif
 
-
-                                <div class="flex-grow-1">
-                                    {{-- Tên người bình luận và thời gian --}}
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-1 text-primary">{{ $comment->user->name ?? 'Unknown' }}</h5>
-                                        <small class="text-muted">
-                                            {{ $comment->updated_at->format('d-m-Y') }} lúc
-                                            {{ $comment->updated_at->format('H:i') }}
-                                            @if ($comment->created_at != $comment->updated_at)
-                                                <span class="text-info">(Chỉnh sửa)</span>
-                                            @endif
-                                        </small>
-                                    </div>
-
-                                    {{-- Nội dung bình luận --}}
-                                    <div class="mt-2">
-                                        <strong class="text-secondary">Nội dung:</strong>
-                                        <p class="mb-1">{{ $comment->content }}</p>
-                                    </div>
-
-
-                                    {{-- Hiển thị các trả lời --}}
-                                    @php
-                                        $replies = $product
-                                            ->comments()
-                                            ->where('parent_user_id', $comment->user_id)
-                                            ->get();
-                                        // @dd($comment->id);
-                                    @endphp
-
-                                    @if ($replies->count() > 0)
-                                        <div class="mt-3 ps-3 border-start">
-                                            <h6 class="fw-bold text-secondary">Phản hồi:</h6>
-                                            @foreach ($replies as $rep)
-                                                <div class="d-flex mt-3 bg-light p-2 rounded-3 shadow-sm">
-                                                    {{-- Avatar người trả lời --}}
-                                                    @if ($rep->user && $rep->user->avatar)
-                                                        <img src="{{ env('VIEW_IMG') }}/{{ $rep->user->avatar }}"
-                                                            class="rounded-circle me-2 border"
-                                                            style="width: 50px; height: 50px; object-fit: cover;"
-                                                            alt="Avatar">
-                                                    @else
-                                                        <img src="{{ env('APP_URL') }}/clients/img/avatar-default.jpg"
-                                                            class="rounded-circle me-2 border"
-                                                            style="width: 50px; height: 50px; object-fit: cover;"
-                                                            alt="Avatar">
-                                                    @endif
-
-                                                    <div class="flex-grow-1">
-                                                        {{-- Tên người trả lời --}}
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <h6 class="mb-1 text-dark">
-                                                                {{ $rep->user->name ?? 'No name' }}
-                                                                <span class="badge bg-success">Admin</span>
-                                                            </h6>
-                                                            <small class="text-muted">
-                                                                {{ $rep->updated_at->format('d-m-Y') }} lúc
-                                                                {{ $rep->updated_at->format('H:i') }}
-                                                                @if ($rep->created_at != $rep->updated_at)
-                                                                    <span class="text-info">(Chỉnh sửa)</span>
-                                                                @endif
-                                                            </small>
-                                                        </div>
-
-                                                        {{-- Nội dung trả lời --}}
-                                                        <div class="mt-1">
-                                                            <strong class="text-secondary">Nội dung:</strong>
-                                                            <p class="mb-1">{{ $rep->content }}</p>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                    <div class="flex-grow-1">
+                                        {{-- Tên và thời gian --}}
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-1 text-primary">{{ $binhLuan->user->name ?? 'Không rõ' }}</h5>
+                                            <small class="text-muted">
+                                                {{ $binhLuan->updated_at->format('d-m-Y') }} lúc {{ $binhLuan->updated_at->format('H:i') }}
+                                                @if ($binhLuan->created_at != $binhLuan->updated_at)
+                                                    <span class="text-info">(Chỉnh sửa)</span>
+                                                @endif
+                                            </small>
                                         </div>
-                                    @endif
+
+                                        {{-- Nội dung --}}
+                                        <div class="mt-2">
+                                            <strong class="text-secondary">Nội dung:</strong>
+                                            <p class="mb-1">{{ $binhLuan->noi_dung }}</p>
+                                        </div>
+
+                                        {{-- Phản hồi --}}
+                                        @if ($binhLuan->replies->count())
+                                            <div class="mt-3 ps-3 border-start">
+                                                <h6 class="fw-bold text-secondary">Phản hồi:</h6>
+                                                @foreach ($binhLuan->replies as $rep)
+                                                    <div class="d-flex mt-3 bg-light p-2 rounded-3 shadow-sm">
+                                                        <img src="{{ $rep->user->avatar ? env('VIEW_IMG') . '/' . $rep->user->avatar : asset('clients/img/avatar-default.jpg') }}"
+                                                            class="rounded-circle me-2 border"
+                                                            style="width: 50px; height: 50px; object-fit: cover;" alt="Avatar">
+
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <h6 class="mb-1 text-dark">
+                                                                    {{ $rep->user->name ?? 'Không rõ' }}
+                                                                    <span class="badge bg-success">Admin</span>
+                                                                </h6>
+                                                                <small class="text-muted">
+                                                                    {{ $rep->updated_at->format('d-m-Y') }} lúc {{ $rep->updated_at->format('H:i') }}
+                                                                    @if ($rep->created_at != $rep->updated_at)
+                                                                        <span class="text-info">(Chỉnh sửa)</span>
+                                                                    @endif
+                                                                </small>
+                                                            </div>
+
+                                                            <div class="mt-1">
+                                                                <strong class="text-secondary">Nội dung:</strong>
+                                                                <p class="mb-1">{{ $rep->noi_dung }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
 
-                </div>
             </div>
             @include('clients.baiviets.sidebar')
         </div>
