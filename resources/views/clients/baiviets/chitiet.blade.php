@@ -103,43 +103,69 @@
                         <p class="first-letter">{!! nl2br(e($baiViet->noi_dung)) !!}</p>
                     </div>
 
-                    <div class="blog-detail-contain mt-4 mb-4">
-                        <p class="first-letter">{!! nl2br(e($baiViet->noi_dung)) !!}</p>
-                    </div>
-
-                    {{-- Di chuyển comment box vào trong phần bài viết --}}
-                    <div class="comment-box overflow-hidden">
+                    {{-- BÌNH LUẬN --}}
+                    <div class="comment-box overflow-hidden mt-5">
                         <div class="leave-title mb-3">
-                            <p><span class="fw-bold" style="font-size: 16px">Bình luận:</span> {{ $binhLuans->count() }} lượt</p>
+                            <p><span class="fw-bold" style="font-size: 16px">Bình luận:</span> {{ $binhLuans->count() }}
+                                lượt</p>
                         </div>
 
+                        {{-- Form bình luận chính --}}
+                        @auth
+                            <div class="card mb-4 shadow-sm p-3 border-0">
+                                <form action="{{ route('binhluan.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="bai_viet_id" value="{{ $baiViet->id }}">
+                                    <textarea name="content" class="form-control" rows="3" placeholder="Nhập bình luận..." required></textarea>
+                                    <button type="submit" class="btn btn-success mt-2">Gửi bình luận</button>
+                                </form>
+                            </div>
+                        @else
+                            <p class="text-center">Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để bình luận.</p>
+                        @endauth
+
+                        {{-- DANH SÁCH BÌNH LUẬN --}}
                         @foreach ($binhLuans as $binhLuan)
                             <div class="card mb-4 shadow-sm p-3 border-0">
                                 <div class="d-flex">
-                                    {{-- Avatar --}}
                                     <img src="{{ $binhLuan->user->avatar ? env('VIEW_IMG') . '/' . $binhLuan->user->avatar : asset('clients/img/avatar-default.jpg') }}"
                                         class="rounded-circle me-3 border"
                                         style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
 
                                     <div class="flex-grow-1">
-                                        {{-- Tên và thời gian --}}
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="mb-1 text-primary">{{ $binhLuan->user->name ?? 'Không rõ' }}</h5>
                                             <small class="text-muted">
-                                                {{ $binhLuan->updated_at->format('d-m-Y') }} lúc {{ $binhLuan->updated_at->format('H:i') }}
+                                                {{ $binhLuan->updated_at->format('d-m-Y H:i') }}
                                                 @if ($binhLuan->created_at != $binhLuan->updated_at)
                                                     <span class="text-info">(Chỉnh sửa)</span>
                                                 @endif
                                             </small>
                                         </div>
 
-                                        {{-- Nội dung --}}
                                         <div class="mt-2">
                                             <strong class="text-secondary">Nội dung:</strong>
                                             <p class="mb-1">{{ $binhLuan->noi_dung }}</p>
                                         </div>
 
-                                        {{-- Phản hồi --}}
+                                        {{-- Nút phản hồi --}}
+                                        @auth
+                                            <button class="btn btn-link p-0 text-sm text-primary reply-btn"
+                                                data-id="{{ $binhLuan->id }}">
+                                                Trả lời
+                                            </button>
+
+                                            {{-- Form phản hồi --}}
+                                            <form action="{{ route('binhluan.reply', $binhLuan->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="bai_viet_id" value="{{ $baiViet->id }}">
+                                                <textarea name="content" class="form-control" rows="2" placeholder="Nhập phản hồi..." required></textarea>
+                                                <button type="submit" class="btn btn-sm btn-primary mt-1">Trả lời</button>
+                                            </form>
+
+                                        @endauth
+
+                                        {{-- PHẢN HỒI --}}
                                         @if ($binhLuan->replies->count())
                                             <div class="mt-3 ps-3 border-start">
                                                 <h6 class="fw-bold text-secondary">Phản hồi:</h6>
@@ -147,16 +173,19 @@
                                                     <div class="d-flex mt-3 bg-light p-2 rounded-3 shadow-sm">
                                                         <img src="{{ $rep->user->avatar ? env('VIEW_IMG') . '/' . $rep->user->avatar : asset('clients/img/avatar-default.jpg') }}"
                                                             class="rounded-circle me-2 border"
-                                                            style="width: 50px; height: 50px; object-fit: cover;" alt="Avatar">
+                                                            style="width: 50px; height: 50px; object-fit: cover;"
+                                                            alt="Avatar">
 
                                                         <div class="flex-grow-1">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <h6 class="mb-1 text-dark">
                                                                     {{ $rep->user->name ?? 'Không rõ' }}
-                                                                    <span class="badge bg-success">Admin</span>
+                                                                    @if ($rep->user->role == 'admin')
+                                                                        <span class="badge bg-success">Admin</span>
+                                                                    @endif
                                                                 </h6>
                                                                 <small class="text-muted">
-                                                                    {{ $rep->updated_at->format('d-m-Y') }} lúc {{ $rep->updated_at->format('H:i') }}
+                                                                    {{ $rep->updated_at->format('d-m-Y H:i') }}
                                                                     @if ($rep->created_at != $rep->updated_at)
                                                                         <span class="text-info">(Chỉnh sửa)</span>
                                                                     @endif
@@ -178,11 +207,23 @@
                             </div>
                         @endforeach
                     </div>
+                </div>
 
+                {{-- Sidebar --}}
+                @include('clients.baiviets.sidebar')
             </div>
-            @include('clients.baiviets.sidebar')
         </div>
-        </div>
-
     </section>
+
+    @push('scripts')
+        <script>
+            document.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const form = document.getElementById(`reply-form-${id}`);
+                    form.classList.toggle('d-none');
+                });
+            });
+        </script>
+    @endpush
 @endsection

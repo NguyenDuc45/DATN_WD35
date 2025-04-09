@@ -249,3 +249,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::post('/admin/binhluan/{id}/reply', [BinhLuanController::class, 'store'])->name('admins.binhluan.store');
 
 Route::post('/danh-gia/update-status/{id}', [DanhGiaController::class, 'updateStatus']);
+Route::post('/binhluan/{id}/reply', [BinhLuanController::class, 'store'])->name('binhluan.reply')->middleware('auth');
+
+Route::post('/binhluan', [BinhLuanController::class, 'store'])->name('binhluan.store');
+
