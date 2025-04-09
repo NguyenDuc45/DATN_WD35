@@ -110,7 +110,6 @@
                                 lượt</p>
                         </div>
 
-                        {{-- Form bình luận chính --}}
                         @auth
                             <div class="card mb-4 shadow-sm p-3 border-0">
                                 <form action="{{ route('binhluan.store') }}" method="POST">
@@ -128,13 +127,15 @@
                         @foreach ($binhLuans as $binhLuan)
                             <div class="card mb-4 shadow-sm p-3 border-0">
                                 <div class="d-flex">
-                                    <img src="{{ $binhLuan->user->avatar ? env('VIEW_IMG') . '/' . $binhLuan->user->avatar : asset('clients/img/avatar-default.jpg') }}"
+                                    <img src="{{ $binhLuan->user->anh_dai_dien
+                                        ? Storage::url($binhLuan->user->anh_dai_dien)
+                                        : asset('clients/img/avatar-default.jpg') }}"
                                         class="rounded-circle me-3 border"
                                         style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
 
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <h5 class="mb-1 text-primary">{{ $binhLuan->user->name ?? 'Không rõ' }}</h5>
+                                            <h5 class="mb-1 text-primary">{{ $binhLuan->user->ten_nguoi_dung }}</h5>
                                             <small class="text-muted">
                                                 {{ $binhLuan->updated_at->format('d-m-Y H:i') }}
                                                 @if ($binhLuan->created_at != $binhLuan->updated_at)
@@ -171,7 +172,7 @@
                                                 <h6 class="fw-bold text-secondary">Phản hồi:</h6>
                                                 @foreach ($binhLuan->replies as $rep)
                                                     <div class="d-flex mt-3 bg-light p-2 rounded-3 shadow-sm">
-                                                        <img src="{{ $rep->user->avatar ? env('VIEW_IMG') . '/' . $rep->user->avatar : asset('clients/img/avatar-default.jpg') }}"
+                                                        <img src="{{ $rep->user->anh_dai_dien ? Storage::url($rep->user->anh_dai_dien) : asset('clients/img/avatar-default.jpg') }}"
                                                             class="rounded-circle me-2 border"
                                                             style="width: 50px; height: 50px; object-fit: cover;"
                                                             alt="Avatar">
@@ -179,7 +180,7 @@
                                                         <div class="flex-grow-1">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <h6 class="mb-1 text-dark">
-                                                                    {{ $rep->user->name ?? 'Không rõ' }}
+                                                                    {{ $rep->user->ten_nguoi_dung }}
                                                                     @if ($rep->user->role == 'admin')
                                                                         <span class="badge bg-success">Admin</span>
                                                                     @endif
